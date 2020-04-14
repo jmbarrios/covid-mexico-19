@@ -6,14 +6,14 @@ from covid_api.serializers import TipoPacienteSerializer
 from covid_api.filters import CasoFilter
 
 
-class CasosViewSet(viewsets.ViewSet):
+class CasosViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Caso.objects.all()
-    model = Caso
+    # model = Caso
     serializer_class = CasoSerializer
     filterset_class = CasoFilter
 
 
-class TipoPacientesViewSet(viewsets.ViewSet):
+class TipoPacientesViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = TipoPaciente.objects.all()
-    model = TipoPaciente
+    # model = TipoPaciente
     serializer_class = TipoPacienteSerializer
