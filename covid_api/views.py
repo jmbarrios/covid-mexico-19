@@ -8,7 +8,6 @@ from covid_api.filters import CasoFilter
 
 class CasosViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Caso.objects.all()
-    # model = Caso
     serializer_class = CasoSerializer
     filterset_class = CasoFilter
 

@@ -85,42 +85,22 @@ COLUMNAS_BOOL = {
     UCI: 'uci',
 }
 
-COLUMNAS_DET = [
-    FECHA_ACTUALIZACION,
-    ORIGEN,
-    SECTOR,
-    ENTIDAD_UM,
-    SEXO,
-    ENTIDAD_NAC,
-    ENTIDAD_RES,
-    MUNICIPIO_RES,
-    TIPO_PACIENTE,
-    FECHA_INGRESO,
-    FECHA_SINTOMAS,
-    FECHA_DEF,
-    INTUBADO,
-    NEUMONIA,
-    EDAD,
-    NACIONALIDAD,
-    EMBARAZO,
-    HABLA_LENGUA_INDI,
-    DIABETES,
-    EPOC,
-    ASMA,
-    INMUSUPR,
-    HIPERTENSION,
-    OTRA_CON,
-    CARDIOVASCULAR,
-    OBESIDAD,
-    RENAL_CRONICA,
-    TABAQUISMO,
-    OTRO_CASO,
-    RESULTADO,
-    MIGRANTE,
-    PAIS_NACIONALIDAD,
-    PAIS_ORIGEN,
-    UCI,
-]
+COLUMNAS_RELACIONALES = {
+    ORIGEN: 'origen',
+    SECTOR: 'sector',
+    ENTIDAD_UM: 'entidad_um',
+    ENTIDAD_NAC: 'entidad_nacimiento',
+    ENTIDAD_RES: 'entidad_residencia',
+    MUNICIPIO_RES: 'municipio_residencia',
+    TIPO_PACIENTE: 'tipo_paciente',
+    RESULTADO: 'resultado',
+    PAIS_NACIONALIDAD: 'pais_nacionalidad',
+    PAIS_ORIGEN: 'pais_origen',
+}
+
+CAMPOS_ENTIDAD = {'entidad_um', 'entidad_nacimiento', 'entidad_residencia'}
+CAMPOS_MUNICIPIO = {'municipio_residencia'}
+CAMPOS_PAIS = {'pais_nacionalidad', 'pais_origen'}
 
 
 @transaction.atomic
@@ -128,15 +108,27 @@ def actualizar_casos(log=None):
     if log is None:
         logging.basicConfig(level=logging.INFO, format=FORMATO)
     else:
-        logging.basicConfig(filename=log, level=logging.INFO, format=FORMATO)
+        logging.basicConfig(
+            filename=log,
+            filemode='w',
+            level=logging.INFO,
+            format=FORMATO)
 
     ultima_tabla = obtener_ultima_tabla()
+    ultima_tabla = ultima_tabla[:1000]
 
     renglones = len(ultima_tabla)
     for _, renglon in tqdm(ultima_tabla.iterrows(), total=renglones):
-        buscar_o_crear_renglon(renglon)
+        datos = obtener_datos(renglon)
 
-    raise Exception
+        consulta = {
+            **crear_consulta_relaciones(renglon),
+            **crear_consulta(datos)}
+
+        if not Caso.objects.filter(**consulta).exists():
+            relaciones = obtener_relacionados(renglon)
+            caso = Caso(**datos, **relaciones)
+            caso.save()
 
 
 def obtener_ultima_tabla():
@@ -155,31 +147,50 @@ def extraer_fecha(nombre):
     return f'{año}-{mes}-{dia}'
 
 
-def buscar_o_crear_renglon(renglon):
-    datos = obtener_datos(renglon)
-    caso, creado = Caso.objects.get_or_create(**datos)
-    if creado:
-        logging.info('Caso creado %s', caso, extra={'modelo': '', 'consulta': ''})
-    return caso, creado
-
-
 def obtener_datos(renglon):
+    return {
+        'sexo': obtener_sexo(renglon),
+        'edad': obtener_edad(renglon),
+        'nacionalidad': obtener_nacionalidad(renglon),
+        **extraer_columnas_booleanas(renglon),
+        **extraer_columnas_fecha(renglon)
+    }
+
+
+def obtener_relacionados(renglon):
     return {
         'origen': obtener_origen(renglon),
         'sector': obtener_sector(renglon),
         'entidad_um': obtener_entidad_um(renglon),
-        'sexo': obtener_sexo(renglon),
         'entidad_nacimiento': obtener_entidad_nacimiento(renglon),
         'entidad_residencia': obtener_entidad_residencia(renglon),
         'municipio_residencia': obtener_municipio(renglon),
         'tipo_paciente': obtener_tipo_paciente(renglon),
-        'edad': obtener_edad(renglon),
-        'nacionalidad': obtener_nacionalidad(renglon),
         'resultado': obtener_resultado(renglon),
         'pais_nacionalidad': obtener_pais_nacionalidad(renglon),
         'pais_origen': obtener_pais_origen(renglon),
-        **extraer_columnas_booleanas(renglon),
-        **extraer_columnas_fecha(renglon)
+    }
+
+
+def crear_consulta_relaciones(renglon):
+    consulta = {}
+
+    for columna, campo in COLUMNAS_RELACIONALES.items():
+        if campo in CAMPOS_PAIS:
+            continue
+
+        if campo in CAMPOS_MUNICIPIO:
+            consulta[f'{campo}__clave_municipio'] = renglon[columna]
+        else:
+            consulta[f'{campo}__clave'] = renglon[columna]
+
+    return consulta
+
+
+def crear_consulta(datos):
+    return {
+        columna: valor for columna, valor in datos.items()
+        if columna != 'fecha_actualizacion'
     }
 
 
@@ -199,21 +210,12 @@ def extraer_columnas_fecha(renglon):
 
 def extraer_bool_columna(renglon, columna):
     try:
-        valor = renglon[columna]
-        return cast_bool(valor)
+        valor = int(renglon[columna])
+        return valor
     except Exception as error:
         extra = {'modelo': columna, 'consulta': valor}
         logging.warning(str(error).strip(), extra=extra)
         return None
-
-
-def cast_bool(valor):
-    if valor == 1:
-        return True
-    if valor == 2:
-        return False
-
-    raise ValueError('Valor inesperado')
 
 
 def extraer_fecha_columna(renglon, columna):
@@ -227,6 +229,9 @@ def extraer_fecha_columna(renglon, columna):
 
 
 def cast_fecha(fecha):
+    if fecha == '9999-99-99':
+        return None
+
     return datetime.date.fromisoformat(fecha)
 
 
@@ -243,15 +248,7 @@ def obtener_entidad_um(renglon):
 
 
 def obtener_sexo(renglon):
-    valor = renglon[SEXO]
-    if valor == 1:
-        return Caso.MUJER
-    if valor == 2:
-        return Caso.HOMBRE
-
-    extra = {'modelo': SEXO, 'consulta': valor}
-    logging.warning('Sexo', extra=extra)
-    return None
+    return int(renglon[SEXO])
 
 
 def obtener_entidad_nacimiento(renglon):
@@ -279,12 +276,7 @@ def obtener_edad(renglon):
 
 
 def obtener_nacionalidad(renglon):
-    valor = renglon[ORIGEN]
-    if valor == 1:
-        return Caso.MEXICANA
-    if valor == 2:
-        return Caso.EXTRANJERA
-    return None
+    return int(renglon[NACIONALIDAD])
 
 
 def obtener_resultado(renglon):
@@ -305,8 +297,12 @@ def buscar_modelo(renglon, mapeo_consulta, modelo):
         for campo, columna in mapeo_consulta.items()
     }
 
+    if 'clave' in consulta and modelo == Entidad:
+        if consulta['clave'] == 99:
+            return None
+
     try:
-        modelo.objects.get(**consulta)
+        return modelo.objects.get(**consulta)
     except Exception as error:
         extra = {
             'modelo': modelo.__name__,

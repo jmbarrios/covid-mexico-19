@@ -3,18 +3,34 @@ from covid_data.models.base import ModeloBase
 
 
 class Caso(ModeloBase):
+    NO_ESPECIFICADO = 99
+
     HOMBRE = 1
     MUJER = 2
     SEXOS = [
         (HOMBRE, 'HOMBRE'),
         (MUJER, 'MUJER'),
+        (NO_ESPECIFICADO, 'NO_ESPECIFICADO')
     ]
 
-    MEXICANA = 'MX'
-    EXTRANJERA = 'EX'
+    MEXICANA = 1
+    EXTRANJERA = 2
     NACIONALIDADES = [
-        (MEXICANA, MEXICANA),
-        (EXTRANJERA, EXTRANJERA)
+        (MEXICANA, 'MEXICANA'),
+        (EXTRANJERA, 'EXTRANJERA'),
+        (NO_ESPECIFICADO, 'NO_ESPECIFICADO')
+    ]
+
+    SI = 1
+    NO = 2
+    NO_APLICA = 97
+    SE_IGNORA = 98
+    SI_NO = [
+        (SI, 'SI'),
+        (NO, 'NO'),
+        (NO_APLICA, 'NO_APLICA'),
+        (SE_IGNORA, 'SE_IGNORA'),
+        (NO_ESPECIFICADO, 'NO_ESPECIFICADO')
     ]
 
     fecha_actualizacion = models.DateField(
@@ -91,65 +107,79 @@ class Caso(ModeloBase):
     fecha_defuncion = models.DateField(
         help_text='Identifica la fecha en que el paciente falleció.',
         null=True)
-    intubado = models.BooleanField(
+    intubado = models.IntegerField(
+        choices=SI_NO,
         null=True,
         help_text='Identifica si el paciente requirió de intubación.')
-    neumonia = models.BooleanField(
+    neumonia = models.IntegerField(
+        choices=SI_NO,
         null=True,
         help_text='Identifica si al paciente se le diagnosticó con neumonía.')
     edad = models.IntegerField(help_text='Identifica la edad del paciente.')
-    nacionalidad = models.CharField(
-        max_length=2,
+    nacionalidad = models.IntegerField(
         null=True,
         choices=NACIONALIDADES,
         help_text='Identifica si el paciente es mexicano o extranjero.')
-    embarazo = models.BooleanField(
+    embarazo = models.IntegerField(
+        choices=SI_NO,
         null=True,
         help_text='Identifica si la paciente está embarazada.')
-    habla_lengua_indigena = models.BooleanField(
+    habla_lengua_indigena = models.IntegerField(
+        choices=SI_NO,
         null=True,
         help_text='Identifica si el paciente habla lengua índigena.')
-    diabetes = models.BooleanField(
+    diabetes = models.IntegerField(
+        choices=SI_NO,
         null=True,
         help_text=(
             'Identifica si el paciente tiene un diagnóstico '
             'de diabetes.'))
-    epoc = models.BooleanField(
+    epoc = models.IntegerField(
+        choices=SI_NO,
         null=True,
         help_text='Identifica si el paciente tiene un diagnóstico de EPOC.')
-    asma = models.BooleanField(
+    asma = models.IntegerField(
+        choices=SI_NO,
         null=True,
         help_text='Identifica si el paciente tiene un diagnóstico de asma.')
-    inmusupr = models.BooleanField(
+    inmusupr = models.IntegerField(
+        choices=SI_NO,
         null=True,
         help_text='Identifica si el paciente presenta inmunosupresión.')
-    hipertension = models.BooleanField(
+    hipertension = models.IntegerField(
+        choices=SI_NO,
         null=True,
         help_text=(
             'Identifica si el paciente tiene un diagnóstico '
             'de hipertensión.'))
-    otras_com = models.BooleanField(
+    otras_com = models.IntegerField(
+        choices=SI_NO,
         null=True,
         help_text=(
             'Identifica si el paciente tiene diagnóstico de '
             'otras enfermedades.'))
-    cardiovascular = models.BooleanField(
+    cardiovascular = models.IntegerField(
+        choices=SI_NO,
         null=True,
         help_text=(
             'Identifica si el paciente tiene un diagnóstico de '
             'enfermedades cardiovasculares.'))
-    obesidad = models.BooleanField(
+    obesidad = models.IntegerField(
+        choices=SI_NO,
         null=True,
         help_text='Identifica si el paciente tiene diagnóstico de obesidad.')
-    renal_cronica = models.BooleanField(
+    renal_cronica = models.IntegerField(
+        choices=SI_NO,
         null=True,
         help_text=(
             'Identifica si el paciente tiene diagnóstico de '
             'insuficiencia renal crónica.'))
-    tabaquismo = models.BooleanField(
+    tabaquismo = models.IntegerField(
+        choices=SI_NO,
         null=True,
         help_text='Identifica si el paciente tiene hábito de tabaquismo.')
-    otro_caso = models.BooleanField(
+    otro_caso = models.IntegerField(
+        choices=SI_NO,
         null=True,
         help_text=(
             'Identifica si el paciente tuvo contacto con algún otro '
@@ -164,7 +194,8 @@ class Caso(ModeloBase):
             'Epidemiológica (INDRE, LESP y LAVE). (Catálogo de resultados '
             'diagnósticos anexo).'
         ))
-    migrante = models.BooleanField(
+    migrante = models.IntegerField(
+        choices=SI_NO,
         null=True,
         help_text='Identifica si el paciente es una persona migrante.')
     pais_nacionalidad = models.ForeignKey(
@@ -181,7 +212,8 @@ class Caso(ModeloBase):
         help_text=(
             'Identifica el país del que partió el paciente rumbo a '
             'México.'))
-    uci = models.BooleanField(
+    uci = models.IntegerField(
+        choices=SI_NO,
         null=True,
         help_text=(
             'Identifica si el paciente requirió ingresar a una Unidad de '

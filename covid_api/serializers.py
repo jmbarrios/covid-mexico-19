@@ -1,10 +1,34 @@
-from covid_data.models import Caso, TipoPaciente
+from covid_data import models
 from rest_framework import serializers
 
 
-class CasoSerializer(serializers.HyperlinkedModelSerializer):
+class OrigenSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Caso
+        model = models.Origen
+        fields = ['clave', 'valor']
+
+
+class SectorSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = models.Sector
+        fields = ['clave', 'valor']
+
+
+class EntidadSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = models.Entidad
+        fields = ['clave', 'nombre']
+
+
+class CasoSerializer(serializers.ModelSerializer):
+    origen = OrigenSerializer(read_only=True)
+    sector = SectorSerializer(read_only=True)
+    entidad_um = EntidadSerializer(read_only=True)
+    # sector = serializers.SlugRelatedField(read_only=True, slug_field='valor')
+    # origen = serializers.SlugRelatedField(read_only=True, slug_field='valor')
+
+    class Meta:
+        model = models.Caso
         fields = ['fecha_actualizacion', 'origen', 'sector', 'entidad_um',
                   'sexo', 'entidad_nacimiento', 'entidad_residencia',
                   'municipio_residencia', 'tipo_paciente', 'fecha_ingreso',
@@ -16,7 +40,7 @@ class CasoSerializer(serializers.HyperlinkedModelSerializer):
                   'pais_nacionalidad', 'pais_origen', 'uci']
 
 
-class TipoPacienteSerializer(serializers.HyperlinkedModelSerializer):
+class TipoPacienteSerializer(serializers.ModelSerializer):
     class Meta:
-        model = TipoPaciente
+        model = models.TipoPaciente
         fields = '__all__'
