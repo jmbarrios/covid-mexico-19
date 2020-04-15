@@ -19,9 +19,28 @@ from covid_data.models import Entidad
 from covid_data.models import Municipio
 
 
+FECHA_REGEX_1 = re.compile(r'([0-9]{2}\.[0-9]{2}\.[0-9]{4})')
+def extraer_fecha_1(nombre):
+    fecha = FECHA_REGEX_1.search(nombre).group(0)
+    dia, mes, año = fecha.split('.')
+    return f'{año}-{mes}-{dia}'
+
+
+FECHA_REGEX_2 = re.compile(r'(20[0-9]{2}[0-9]{4})')
+def extraer_fecha_2(nombre):
+    fecha = FECHA_REGEX_2.search(nombre).group(0)
+    año = '20' + fecha[:2]
+    mes = fecha[2:4]
+    dia = fecha[4:]
+    return f'{año}-{mes}-{dia}'
+
+
 FORMATO = '%(levelname)s:: %(message)s %(modelo)s %(consulta)s'
 ENCODING = 'latin-1'
-FECHA_RE = re.compile(r'([0-9]{2}\.[0-9]{2}\.[0-9]{4})')
+PARSERS_FECHA = [
+    extraer_fecha_1,
+    extraer_fecha_2
+]
 
 FECHA_ACTUALIZACION = 'FECHA_ACTUALIZACION'
 ORIGEN = 'ORIGEN'
@@ -115,9 +134,9 @@ def actualizar_casos(log=None):
             format=FORMATO)
 
     ultima_tabla = obtener_ultima_tabla()
-    ultima_tabla = ultima_tabla[:1000]
 
     renglones = len(ultima_tabla)
+    nuevos_casos = []
     for _, renglon in tqdm(ultima_tabla.iterrows(), total=renglones):
         datos = obtener_datos(renglon)
 
@@ -127,8 +146,19 @@ def actualizar_casos(log=None):
 
         if not Caso.objects.filter(**consulta).exists():
             relaciones = obtener_relacionados(renglon)
-            caso = Caso(**datos, **relaciones)
-            caso.save()
+            nuevos_casos.append(Caso(**datos, **relaciones))
+
+    Caso.objects.bulk_create(nuevos_casos)
+
+
+def extraer_fecha(nombre):
+    for parser in PARSERS_FECHA:
+        try:
+            return parser(nombre)
+        except:
+            pass
+
+    raise ValueError(f'Fecha irreconocible: {nombre}')
 
 
 def obtener_ultima_tabla():
@@ -139,12 +169,6 @@ def obtener_ultima_tabla():
     tablas = glob.glob(os.path.join(directorio, '*.csv'))
     ruta = sorted(tablas, key=extraer_fecha, reverse=True)[0]
     return pd.read_csv(ruta, encoding=ENCODING)
-
-
-def extraer_fecha(nombre):
-    fecha = FECHA_RE.search(nombre).group(0)
-    dia, mes, año = fecha.split('.')
-    return f'{año}-{mes}-{dia}'
 
 
 def obtener_datos(renglon):
@@ -179,19 +203,37 @@ def crear_consulta_relaciones(renglon):
         if campo in CAMPOS_PAIS:
             continue
 
+        valor = renglon[columna]
+        if columna != MUNICIPIO_RES and valor == Caso.NO_ESPECIFICADO:
+            consulta[f'{campo}__isnull'] = True
+            continue
+
+        if valor is None:
+            consulta[f'{campo}__isnull'] = True
+            continue
+
         if campo in CAMPOS_MUNICIPIO:
-            consulta[f'{campo}__clave_municipio'] = renglon[columna]
+            consulta[f'{campo}__clave_municipio'] = valor
         else:
-            consulta[f'{campo}__clave'] = renglon[columna]
+            consulta[f'{campo}__clave'] = valor
 
     return consulta
 
 
 def crear_consulta(datos):
-    return {
-        columna: valor for columna, valor in datos.items()
-        if columna != 'fecha_actualizacion'
-    }
+    consulta = {}
+
+    for columna, valor in datos.items():
+        if columna == 'fecha_actualizacion':
+            continue
+
+        if valor is None:
+            consulta[f'{columna}__isnull'] = True
+            continue
+
+        consulta[columna] = valor
+
+    return consulta
 
 
 def extraer_columnas_booleanas(renglon):
@@ -297,8 +339,8 @@ def buscar_modelo(renglon, mapeo_consulta, modelo):
         for campo, columna in mapeo_consulta.items()
     }
 
-    if 'clave' in consulta and modelo == Entidad:
-        if consulta['clave'] == 99:
+    if 'clave' in consulta and modelo != Municipio:
+        if consulta['clave'] == Caso.NO_ESPECIFICADO:
             return None
 
     try:

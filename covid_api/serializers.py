@@ -105,9 +105,3 @@ class CasoSerializer(serializers.ModelSerializer):
                   'otras_com', 'cardiovascular', 'obesidad', 'renal_cronica',
                   'tabaquismo', 'otro_caso', 'resultado', 'migrante',
                   'pais_nacionalidad', 'pais_origen', 'uci']
-
-
-class TipoPacienteSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = models.TipoPaciente
-        fields = '__all__'
