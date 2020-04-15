@@ -53,8 +53,7 @@ class PaisFilter(FilterSet):
 class MunicipioFilter(FilterSet):
     class Meta:
         model = models.Municipio
-        fields = ['clave', 'clave_municipio',
-                  'abreviatura', 'entidad', 'descripcion']
+        fields = ['clave', 'clave_municipio', 'entidad', 'descripcion']
 
 
 class SiNoFilter(FilterSet):
@@ -76,7 +75,6 @@ class CasoFilter(FilterSet):
             'entidad_residencia__descripcion': ['exact', 'contains'],
             'municipio_residencia__descripcion': ['exact', 'contains'],
             'municipio_residencia__clave_municipio': ['exact'],
-            'municipio_residencia__abreviatura': ['exact', 'contains'],
             'tipo_paciente__descripcion': ['exact', 'contains'],
             'fecha_ingreso': ['gt', 'lt', 'gte', 'lte'],
             'fecha_sintomas': ['gt', 'lt', 'gte', 'lte'],
@@ -84,7 +82,8 @@ class CasoFilter(FilterSet):
             'intubado': ['exact'],
             'neumonia': ['exact'],
             'edad': ['exact', 'gt', 'lt', 'gte', 'lte'],
-            'nacionalidad': ['exact', 'contains'],
+            'nacionalidad': ['exact'],
+            'nacionalidad__descripcion': ['exact', 'contains'],
             'embarazo': ['exact'],
             'habla_lengua_indigena': ['exact'],
             'diabetes': ['exact'],

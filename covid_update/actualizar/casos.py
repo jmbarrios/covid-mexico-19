@@ -114,8 +114,6 @@ COLUMNAS_RELACIONALES = {
 }
 
 COLUMNAS_ESPACIALES = {ENTIDAD_UM, ENTIDAD_NAC, ENTIDAD_RES, MUNICIPIO_RES}
-
-CAMPOS_ENTIDAD = {'entidad_um', 'entidad_nacimiento', 'entidad_residencia'}
 CAMPOS_MUNICIPIO = {'municipio_residencia'}
 CAMPOS_PAIS = {'pais_nacionalidad', 'pais_origen'}
 
@@ -267,31 +265,31 @@ def obtener_columnas_si_no(renglon):
 
 
 def obtener_bool_columna(renglon, columna):
-    return buscar_modelo(renglon, {'clave': columna}, models.SiNo)
+    return buscar_modelo(renglon, columna, models.SiNo)
 
 
 def obtener_origen(renglon):
-    return buscar_modelo(renglon, {'clave': ORIGEN}, models.Origen)
+    return buscar_modelo(renglon, ORIGEN, models.Origen)
 
 
 def obtener_sector(renglon):
-    return buscar_modelo(renglon, {'clave': SECTOR}, models.Sector)
+    return buscar_modelo(renglon, SECTOR, models.Sector)
 
 
 def obtener_entidad_um(renglon):
-    return buscar_modelo(renglon, {'clave': ENTIDAD_UM}, models.Entidad)
+    return buscar_modelo(renglon, ENTIDAD_UM, models.Entidad)
 
 
 def obtener_sexo(renglon):
-    return buscar_modelo(renglon, {'clave': SEXO}, models.Sexo)
+    return buscar_modelo(renglon, SEXO, models.Sexo)
 
 
 def obtener_entidad_nacimiento(renglon):
-    return buscar_modelo(renglon, {'clave': ENTIDAD_NAC}, models.Entidad)
+    return buscar_modelo(renglon, ENTIDAD_NAC, models.Entidad)
 
 
 def obtener_entidad_residencia(renglon):
-    return buscar_modelo(renglon, {'clave': ENTIDAD_RES}, models.Entidad)
+    return buscar_modelo(renglon, ENTIDAD_RES, models.Entidad)
 
 
 def obtener_municipio(renglon):
@@ -303,7 +301,7 @@ def obtener_municipio(renglon):
 
 
 def obtener_tipo_paciente(renglon):
-    return buscar_modelo(renglon, {'clave': TIPO_PACIENTE}, models.TipoPaciente)
+    return buscar_modelo(renglon, TIPO_PACIENTE, models.TipoPaciente)
 
 
 def obtener_edad(renglon):
@@ -311,11 +309,11 @@ def obtener_edad(renglon):
 
 
 def obtener_nacionalidad(renglon):
-    return buscar_modelo(renglon, {'clave': NACIONALIDAD}, models.Nacionalidad)
+    return buscar_modelo(renglon, NACIONALIDAD, models.Nacionalidad)
 
 
 def obtener_resultado(renglon):
-    return buscar_modelo(renglon, {'clave': RESULTADO}, models.Resultado)
+    return buscar_modelo(renglon, RESULTADO, models.Resultado)
 
 
 def obtener_pais_nacionalidad(renglon):
@@ -326,15 +324,9 @@ def obtener_pais_origen(renglon):
     return buscar_pais(renglon[PAIS_ORIGEN])
 
 
-def buscar_modelo(renglon, mapeo_consulta, modelo):
-    consulta = {
-        campo: renglon[columna]
-        for campo, columna in mapeo_consulta.items()
-    }
-
-    if 'clave' in consulta and modelo != models.Municipio:
-        if consulta['clave'] == models.Caso.NO_ESPECIFICADO:
-            return None
+def buscar_modelo(renglon, consulta, modelo):
+    if not isinstance(consulta, dict):
+        consulta = {'clave': renglon[consulta]}
 
     try:
         return modelo.objects.get(**consulta)
