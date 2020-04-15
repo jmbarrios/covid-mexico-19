@@ -1,15 +1,16 @@
 from rest_framework import routers
 from covid_api import views
 
+
 router = routers.DefaultRouter()
-router.register(r'sexo', views.SexoViewSet)
-router.register(r'origen', views.OrigenViewSet)
-router.register(r'sector', views.SectorViewSet)
-router.register(r'entidad', views.EntidadViewSet)
-router.register(r'nacionalidad', views.NacionalidadViewSet)
-router.register(r'tipo_paciente', views.TipoPacienteViewSet)
-router.register(r'resultado', views.ResultadoViewSet)
-router.register(r'pais', views.PaisViewSet)
-router.register(r'municipio', views.MunicipioViewSet)
-router.register(r'si_no', views.SiNoViewSet)
-router.register(r'caso', views.CasoViewSet)
+router.register('entidad', views.EntidadViewSet, basename='entidad')
+router.register('sexo', views.SexoViewSet)
+router.register('origen', views.OrigenViewSet)
+router.register('sector', views.SectorViewSet)
+router.register('nacionalidad', views.NacionalidadViewSet)
+router.register('tipo_paciente', views.TipoPacienteViewSet)
+router.register('resultado', views.ResultadoViewSet)
+router.register('pais', views.PaisViewSet)
+router.register('municipio', views.MunicipioViewSet)
+router.register('si_no', views.SiNoViewSet)
+router.register('caso', views.CasoViewSet)

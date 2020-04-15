@@ -1,33 +1,36 @@
 from rest_framework import viewsets
 from rest_framework import serializers
-from rest_framework.decorators import action
-from rest_framework.response import Response
 from geojson_serializer.serializers import geojson_serializer
 
 from covid_data import models
 from covid_api import filters
 
 
-class EntidadSerializer(serializers.HyperlinkedModelSerializer):
+class EntidadSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Entidad
         fields = ['url', 'clave', 'descripcion']
+        extra_kwargs = {
+            'url': {'view_name': 'entidad-detail', 'lookup_field': 'clave'}
+        }
 
 
 @geojson_serializer('geometria')
 class EntidadGeoSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Entidad
-        fields = ['clave', 'descripcion', 'geometria']
+        fields = ['url', 'clave', 'descripcion', 'geometria']
+        extra_kwargs = {
+            'url': {'view_name': 'entidad-detail', 'lookup_field': 'clave'}
+        }
 
 
-class EntidadViewSet(viewsets.ModelViewSet):
+class EntidadViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = models.Entidad.objects.all()
-    serializer_class = EntidadSerializer
     filterset_class = filters.EntidadFilter
+    lookup_field = 'clave'
 
-    @action(detail=True, methods=['GET'], name='geometria')
-    def geometria(self, request, pk=None):
-        entidad = self.get_object()
-        serializer = EntidadGeoSerializer(entidad)
-        return Response(serializer.data)
+    def get_serializer_class(self, *args, **kwargs):
+        if self.action == 'list':
+            return EntidadSerializer
+        return EntidadGeoSerializer
