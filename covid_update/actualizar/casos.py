@@ -340,12 +340,12 @@ def buscar_modelo(renglon, consulta, modelo):
 
 def buscar_pais(nombre):
     try:
-        return models.Pais.objects.filter(nombre__icontains=nombre).first()
+        return models.Pais.objects.filter(descripcion__icontains=nombre).first()
     except:
         pass
 
     try:
-        return models.Pais.objects.filter(codigo__icontains=nombre).first()
+        return models.Pais.objects.filter(clave__icontains=nombre).first()
     except:
         pass
 
