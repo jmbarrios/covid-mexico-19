@@ -4,7 +4,14 @@ REST_FRAMEWORK = {
         'django_filters.rest_framework.DjangoFilterBackend',
     ),
     'DEFAULT_PERMISSION_CLASSES': [
-        'rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly'
+        'rest_framework.permissions.IsAuthenticatedOrReadOnly'
     ],
     'PAGE_SIZE': 100,
 }
+
+COVID_API_APPS = [
+    'drf_yasg',
+    'rest_framework',
+    'django_filters',
+    'covid_api.apps.CovidApiConfig',
+]

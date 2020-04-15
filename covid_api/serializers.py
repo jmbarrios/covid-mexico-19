@@ -118,5 +118,4 @@ class EntidadGeoSerializer(serializers.ModelSerializer):
 class MunicipioGeoSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Municipio
-        fields = ['clave', 'clave_municipio',
-                  'abreviatura', 'entidad', 'descripcion', 'geometria']
+        fields = ['clave', 'clave_municipio', 'entidad', 'descripcion', 'geometria']
