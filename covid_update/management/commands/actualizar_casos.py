@@ -32,6 +32,7 @@ class Command(BaseCommand):
         if log is None:
             directorio = os.path.join(
                 settings.BASE_DIR,
+                settings.DATOS_BASE_DIR,
                 settings.LOGS_DIR)
 
             if not os.path.exists(directorio):

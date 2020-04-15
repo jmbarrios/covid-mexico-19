@@ -5,34 +5,6 @@ from covid_data.models.base import ModeloBase
 class Caso(ModeloBase):
     NO_ESPECIFICADO = 99
 
-    HOMBRE = 1
-    MUJER = 2
-    SEXOS = [
-        (HOMBRE, 'HOMBRE'),
-        (MUJER, 'MUJER'),
-        (NO_ESPECIFICADO, 'NO_ESPECIFICADO')
-    ]
-
-    MEXICANA = 1
-    EXTRANJERA = 2
-    NACIONALIDADES = [
-        (MEXICANA, 'MEXICANA'),
-        (EXTRANJERA, 'EXTRANJERA'),
-        (NO_ESPECIFICADO, 'NO_ESPECIFICADO')
-    ]
-
-    SI = 1
-    NO = 2
-    NO_APLICA = 97
-    SE_IGNORA = 98
-    SI_NO = [
-        (SI, 'SI'),
-        (NO, 'NO'),
-        (NO_APLICA, 'NO_APLICA'),
-        (SE_IGNORA, 'SE_IGNORA'),
-        (NO_ESPECIFICADO, 'NO_ESPECIFICADO')
-    ]
-
     fecha_actualizacion = models.DateField(
         help_text=(
             'La base de datos se alimenta diariamente, esta variable permite '
@@ -65,8 +37,9 @@ class Caso(ModeloBase):
             'Identifica la entidad donde se ubica la unidad medica que '
             'brindó la atención.'),
         null=True)
-    sexo = models.IntegerField(
-        choices=SEXOS,
+    sexo = models.ForeignKey(
+        'Sexo',
+        on_delete=models.PROTECT,
         help_text='Identifica al sexo del paciente.',
         null=True)
     entidad_nacimiento = models.ForeignKey(
@@ -107,79 +80,110 @@ class Caso(ModeloBase):
     fecha_defuncion = models.DateField(
         help_text='Identifica la fecha en que el paciente falleció.',
         null=True)
-    intubado = models.IntegerField(
-        choices=SI_NO,
+    intubado = models.ForeignKey(
+        'SiNo',
+        on_delete=models.PROTECT,
+        related_name='intubado',
         null=True,
         help_text='Identifica si el paciente requirió de intubación.')
-    neumonia = models.IntegerField(
-        choices=SI_NO,
+    neumonia = models.ForeignKey(
+        'SiNo',
+        on_delete=models.PROTECT,
+        related_name='neumonia',
         null=True,
         help_text='Identifica si al paciente se le diagnosticó con neumonía.')
     edad = models.IntegerField(help_text='Identifica la edad del paciente.')
-    nacionalidad = models.IntegerField(
+    nacionalidad = models.ForeignKey(
+        'Nacionalidad',
+        on_delete=models.PROTECT,
         null=True,
-        choices=NACIONALIDADES,
         help_text='Identifica si el paciente es mexicano o extranjero.')
-    embarazo = models.IntegerField(
-        choices=SI_NO,
+    embarazo = models.ForeignKey(
+        'SiNo',
+        on_delete=models.PROTECT,
+        related_name='embarazo',
         null=True,
         help_text='Identifica si la paciente está embarazada.')
-    habla_lengua_indigena = models.IntegerField(
-        choices=SI_NO,
+    habla_lengua_indigena = models.ForeignKey(
+        'SiNo',
+        on_delete=models.PROTECT,
+        related_name='habla_lengua_indigena',
         null=True,
         help_text='Identifica si el paciente habla lengua índigena.')
-    diabetes = models.IntegerField(
-        choices=SI_NO,
+    diabetes = models.ForeignKey(
+        'SiNo',
+        on_delete=models.PROTECT,
+        related_name='diabetes',
         null=True,
         help_text=(
             'Identifica si el paciente tiene un diagnóstico '
             'de diabetes.'))
-    epoc = models.IntegerField(
-        choices=SI_NO,
+    epoc = models.ForeignKey(
+        'SiNo',
+        on_delete=models.PROTECT,
+        related_name='epoc',
         null=True,
         help_text='Identifica si el paciente tiene un diagnóstico de EPOC.')
-    asma = models.IntegerField(
-        choices=SI_NO,
+    asma = models.ForeignKey(
+        'SiNo',
+        on_delete=models.PROTECT,
+        related_name='asma',
         null=True,
         help_text='Identifica si el paciente tiene un diagnóstico de asma.')
-    inmusupr = models.IntegerField(
-        choices=SI_NO,
+    inmusupr = models.ForeignKey(
+        'SiNo',
+        on_delete=models.PROTECT,
+        related_name='inmusupr',
         null=True,
         help_text='Identifica si el paciente presenta inmunosupresión.')
-    hipertension = models.IntegerField(
-        choices=SI_NO,
+    hipertension = models.ForeignKey(
+        'SiNo',
+        on_delete=models.PROTECT,
+        related_name='hipertension',
         null=True,
         help_text=(
             'Identifica si el paciente tiene un diagnóstico '
             'de hipertensión.'))
-    otras_com = models.IntegerField(
-        choices=SI_NO,
+    otras_com = models.ForeignKey(
+        'SiNo',
+        on_delete=models.PROTECT,
+        related_name='otras_com',
         null=True,
         help_text=(
             'Identifica si el paciente tiene diagnóstico de '
             'otras enfermedades.'))
-    cardiovascular = models.IntegerField(
-        choices=SI_NO,
+    cardiovascular = models.ForeignKey(
+        'SiNo',
+        on_delete=models.PROTECT,
+        related_name='cardiovascular',
         null=True,
         help_text=(
             'Identifica si el paciente tiene un diagnóstico de '
             'enfermedades cardiovasculares.'))
-    obesidad = models.IntegerField(
-        choices=SI_NO,
+    obesidad = models.ForeignKey(
+        'SiNo',
+        on_delete=models.PROTECT,
+        related_name='obesidad',
         null=True,
         help_text='Identifica si el paciente tiene diagnóstico de obesidad.')
-    renal_cronica = models.IntegerField(
-        choices=SI_NO,
+    renal_cronica = models.ForeignKey(
+        'SiNo',
+        on_delete=models.PROTECT,
+        related_name='renal_cronica',
         null=True,
         help_text=(
             'Identifica si el paciente tiene diagnóstico de '
             'insuficiencia renal crónica.'))
-    tabaquismo = models.IntegerField(
-        choices=SI_NO,
+    tabaquismo = models.ForeignKey(
+        'SiNo',
+        on_delete=models.PROTECT,
+        related_name='tabaquismo',
         null=True,
         help_text='Identifica si el paciente tiene hábito de tabaquismo.')
-    otro_caso = models.IntegerField(
-        choices=SI_NO,
+    otro_caso = models.ForeignKey(
+        'SiNo',
+        on_delete=models.PROTECT,
+        related_name='otro_caso',
         null=True,
         help_text=(
             'Identifica si el paciente tuvo contacto con algún otro '
@@ -194,8 +198,10 @@ class Caso(ModeloBase):
             'Epidemiológica (INDRE, LESP y LAVE). (Catálogo de resultados '
             'diagnósticos anexo).'
         ))
-    migrante = models.IntegerField(
-        choices=SI_NO,
+    migrante = models.ForeignKey(
+        'SiNo',
+        on_delete=models.PROTECT,
+        related_name='migrante',
         null=True,
         help_text='Identifica si el paciente es una persona migrante.')
     pais_nacionalidad = models.ForeignKey(
@@ -212,8 +218,10 @@ class Caso(ModeloBase):
         help_text=(
             'Identifica el país del que partió el paciente rumbo a '
             'México.'))
-    uci = models.IntegerField(
-        choices=SI_NO,
+    uci = models.ForeignKey(
+        'SiNo',
+        on_delete=models.PROTECT,
+        related_name='uci',
         null=True,
         help_text=(
             'Identifica si el paciente requirió ingresar a una Unidad de '

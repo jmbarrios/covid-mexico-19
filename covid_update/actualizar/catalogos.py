@@ -5,11 +5,7 @@ import pandas as pd
 from django.conf import settings
 from django.db import transaction
 
-from covid_data.models import Resultado
-from covid_data.models import TipoPaciente
-from covid_data.models import Sector
-from covid_data.models import Origen
-
+from covid_data import models
 from covid_update.constantes import COL_DESCRIPCION
 
 
@@ -17,17 +13,17 @@ RESULTADO = 'RESULTADO'
 TIPO_PACIENTE = 'TIPO_PACIENTE'
 ORIGEN = 'ORIGEN'
 SECTOR = 'SECTOR'
-CATALOGOS = [
-    RESULTADO,
-    TIPO_PACIENTE,
-    ORIGEN,
-    SECTOR,
-]
-MODELOS = {
-    RESULTADO: Resultado,
-    TIPO_PACIENTE: TipoPaciente,
-    ORIGEN: Origen,
-    SECTOR: Sector
+SI_NO = 'SI_NO'
+NACIONALIDAD = 'NACIONALIDAD'
+SEXO = 'SEXO'
+CATALOGOS = {
+    RESULTADO: models.Resultado,
+    TIPO_PACIENTE: models.TipoPaciente,
+    ORIGEN: models.Origen,
+    SECTOR: models.Sector,
+    SI_NO: models.SiNo,
+    NACIONALIDAD: models.Nacionalidad,
+    SEXO: models.Sexo
 }
 
 logging.basicConfig(level=logging.INFO)
@@ -42,7 +38,7 @@ def actualizar_catalogos():
 
 def actualizar_catalogo(catalogo):
     df = cargar_catalogo(catalogo)
-    modelo = MODELOS[catalogo]
+    modelo = CATALOGOS[catalogo]
 
     for clave, renglon in df.iterrows():
         valor = renglon[COL_DESCRIPCION]

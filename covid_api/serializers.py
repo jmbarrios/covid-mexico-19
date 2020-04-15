@@ -24,8 +24,6 @@ class CasoSerializer(serializers.ModelSerializer):
     origen = OrigenSerializer(read_only=True)
     sector = SectorSerializer(read_only=True)
     entidad_um = EntidadSerializer(read_only=True)
-    # sector = serializers.SlugRelatedField(read_only=True, slug_field='valor')
-    # origen = serializers.SlugRelatedField(read_only=True, slug_field='valor')
 
     class Meta:
         model = models.Caso
