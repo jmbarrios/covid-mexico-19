@@ -53,8 +53,7 @@ class PaisFilter(FilterSet):
 class MunicipioFilter(FilterSet):
     class Meta:
         model = models.Municipio
-        fields = ['clave', 'clave_municipio',
-                  'abreviatura', 'entidad', 'descripcion']
+        fields = ['clave', 'clave_municipio', 'entidad', 'descripcion']
 
 
 class SiNoFilter(FilterSet):
