@@ -1,7 +1,7 @@
 from rest_framework import viewsets
 from covid_data import models
-from covid_data import serializers
-from covid_data import filters
+from covid_api import serializers
+from covid_api import filters
 
 
 class SexoViewSet(viewsets.ReadOnlyModelViewSet):
