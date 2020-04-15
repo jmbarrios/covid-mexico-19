@@ -28,7 +28,7 @@ def extraer_fecha_2(nombre):
     return f'{año}-{mes}-{dia}'
 
 
-FORMATO = '%(levelname)s:: %(message)s %(modelo)s %(consulta)s'
+FORMATO = '%(levelname)s:: %(message)s %(columna)s %(valor)s'
 ENCODING = 'latin-1'
 PARSERS_FECHA = [
     extraer_fecha_1,
@@ -113,6 +113,18 @@ COLUMNAS_RELACIONALES = {
     **COLUMNAS_SI_NO
 }
 
+COLUMNAS_MODELOS = {
+    NACIONALIDAD: models.Nacionalidad,
+    ORIGEN: models.Origen,
+    ENTIDAD_UM: models.Entidad,
+    ENTIDAD_NAC: models.Entidad,
+    ENTIDAD_RES: models.Entidad,
+    TIPO_PACIENTE: models.TipoPaciente,
+    RESULTADO: models.Resultado,
+    SEXO: models.Sexo,
+    SECTOR: models.Sector,
+}
+
 COLUMNAS_ESPACIALES = {ENTIDAD_UM, ENTIDAD_NAC, ENTIDAD_RES, MUNICIPIO_RES}
 CAMPOS_MUNICIPIO = {'municipio_residencia'}
 CAMPOS_PAIS = {'pais_nacionalidad', 'pais_origen'}
@@ -129,22 +141,33 @@ def actualizar_casos(log=None):
             level=logging.INFO,
             format=FORMATO)
 
-    ultima_tabla = obtener_ultima_tabla()[:100]
+    tablas = obtener_ultimas_tablas()
 
-    renglones = len(ultima_tabla)
+    if len(tablas) == 2:
+        tabla = eliminar_repetidos(*tablas)
+    else:
+        tabla = tablas[0]
+
+    catalogos = cargar_catalogos()
+    municipios = cargar_municipios()
+
+    renglones = len(tabla)
     nuevos_casos = []
-    for _, renglon in tqdm(ultima_tabla.iterrows(), total=renglones):
-        datos = obtener_datos(renglon)
-
-        consulta = {
-            **crear_consulta_relaciones(renglon),
-            **crear_consulta(datos)}
-
-        if not models.Caso.objects.filter(**consulta).exists():
-            relaciones = obtener_relacionados(renglon)
-            nuevos_casos.append(models.Caso(**datos, **relaciones))
+    for _, renglon in tqdm(tabla.iterrows(), total=renglones):
+        datos = obtener_datos(renglon, catalogos, municipios)
+        nuevos_casos.append(models.Caso(**datos))
 
     models.Caso.objects.bulk_create(nuevos_casos)
+
+
+def obtener_ultimas_tablas():
+    directorio = os.path.join(
+        settings.BASE_DIR,
+        settings.DATOS_BASE_DIR,
+        settings.CASOS_DIR)
+    tablas = glob.glob(os.path.join(directorio, '*.csv'))
+    rutas = sorted(tablas, key=extraer_fecha, reverse=True)[:2]
+    return [pd.read_csv(ruta, encoding=ENCODING) for ruta in rutas]
 
 
 def extraer_fecha(nombre):
@@ -158,79 +181,65 @@ def extraer_fecha(nombre):
     raise ValueError(f'Fecha irreconocible: {nombre}. Errores: {errores}')
 
 
-def obtener_ultima_tabla():
-    directorio = os.path.join(
-        settings.BASE_DIR,
-        settings.DATOS_BASE_DIR,
-        settings.CASOS_DIR)
-    tablas = glob.glob(os.path.join(directorio, '*.csv'))
-    ruta = sorted(tablas, key=extraer_fecha, reverse=True)[0]
-    return pd.read_csv(ruta, encoding=ENCODING)
+def eliminar_repetidos(ultima, anterior):
+    return ultima
 
 
-def obtener_datos(renglon):
+def cargar_catalogos():
     return {
-        'edad': obtener_edad(renglon),
-        **extraer_columnas_fecha(renglon)
+        'Nacionalidad': cargar_catalogo_de_modelo(models.Nacionalidad),
+        'Origen': cargar_catalogo_de_modelo(models.Origen),
+        'Resultado': cargar_catalogo_de_modelo(models.Resultado),
+        'Sector': cargar_catalogo_de_modelo(models.Sector),
+        'Sexo': cargar_catalogo_de_modelo(models.Sexo),
+        'SiNo': cargar_catalogo_de_modelo(models.SiNo),
+        'TipoPaciente': cargar_catalogo_de_modelo(models.TipoPaciente),
+        'Entidad': cargar_catalogo_de_modelo(models.Entidad),
     }
 
 
-def obtener_relacionados(renglon):
+def cargar_municipios():
+    only = ['clave_municipio', 'entidad']
+
+    entidades = {
+        entidad.id: entidad
+        for entidad in models.Entidad.objects.only('id').all()
+    }
+
+    municipios = {}
+    for municipio in models.Municipio.objects.only(*only).all():
+        clave = municipio.clave_municipio
+        entidad = entidades[municipio.entidad_id]
+        municipios[(clave, entidad.clave)] = municipio
+
+    return municipios
+
+
+def cargar_catalogo_de_modelo(modelo, defer=None):
     return {
-        'origen': obtener_origen(renglon),
-        'sector': obtener_sector(renglon),
-        'entidad_um': obtener_entidad_um(renglon),
-        'entidad_nacimiento': obtener_entidad_nacimiento(renglon),
-        'entidad_residencia': obtener_entidad_residencia(renglon),
-        'municipio_residencia': obtener_municipio(renglon),
-        'tipo_paciente': obtener_tipo_paciente(renglon),
-        'resultado': obtener_resultado(renglon),
+        instancia.clave: instancia
+        for instancia in modelo.objects.only('clave', 'id').all()
+    }
+
+
+def obtener_datos(renglon, catalogos, municipios):
+    return {
+        'edad': int(renglon[EDAD]),
+        'nacionalidad': buscar_catalogo(renglon, NACIONALIDAD, catalogos),
+        'origen': buscar_catalogo(renglon, ORIGEN, catalogos),
+        'resultado': buscar_catalogo(renglon, RESULTADO, catalogos),
+        'sector': buscar_catalogo(renglon, SECTOR, catalogos),
+        'sexo': buscar_catalogo(renglon, SEXO, catalogos),
+        'tipo_paciente': buscar_catalogo(renglon, TIPO_PACIENTE, catalogos),
+        'entidad_um': buscar_catalogo(renglon, ENTIDAD_UM, catalogos),
+        'entidad_nacimiento': buscar_catalogo(renglon, ENTIDAD_NAC, catalogos),
+        'entidad_residencia': buscar_catalogo(renglon, ENTIDAD_RES, catalogos),
+        'municipio_residencia': obtener_municipio(renglon, municipios),
         'pais_nacionalidad': obtener_pais_nacionalidad(renglon),
         'pais_origen': obtener_pais_origen(renglon),
-        'sexo': obtener_sexo(renglon),
-        'nacionalidad': obtener_nacionalidad(renglon),
-        **obtener_columnas_si_no(renglon),
+        **obtener_columnas_si_no(renglon, catalogos),
+        **extraer_columnas_fecha(renglon)
     }
-
-
-def crear_consulta_relaciones(renglon):
-    consulta = {}
-
-    for columna, campo in COLUMNAS_RELACIONALES.items():
-        if campo in CAMPOS_PAIS:
-            continue
-
-        valor = renglon[columna]
-        if columna in COLUMNAS_ESPACIALES and valor == models.Caso.NO_ESPECIFICADO:
-            consulta[f'{campo}__isnull'] = True
-            continue
-
-        if valor is None:
-            consulta[f'{campo}__isnull'] = True
-            continue
-
-        if campo in CAMPOS_MUNICIPIO:
-            consulta[f'{campo}__clave_municipio'] = valor
-        else:
-            consulta[f'{campo}__clave'] = valor
-
-    return consulta
-
-
-def crear_consulta(datos):
-    consulta = {}
-
-    for columna, valor in datos.items():
-        if columna == 'fecha_actualizacion':
-            continue
-
-        if valor is None:
-            consulta[f'{columna}__isnull'] = True
-            continue
-
-        consulta[columna] = valor
-
-    return consulta
 
 
 def extraer_columnas_fecha(renglon):
@@ -245,7 +254,7 @@ def extraer_fecha_columna(renglon, columna):
         valor = renglon[columna]
         return cast_fecha(valor)
     except Exception as error:
-        extra = {'modelo': columna, 'consulta': valor}
+        extra = {'columna': columna, 'valor': valor}
         logging.warning(str(error).strip(), extra=extra)
         return None
 
@@ -257,63 +266,25 @@ def cast_fecha(fecha):
     return datetime.date.fromisoformat(fecha)
 
 
-def obtener_columnas_si_no(renglon):
+def obtener_columnas_si_no(renglon, catalogos):
     return {
-        campo: obtener_bool_columna(renglon, columna)
+        campo: obtener_bool_columna(renglon, columna, catalogos)
         for columna, campo in COLUMNAS_SI_NO.items()
     }
 
 
-def obtener_bool_columna(renglon, columna):
-    return buscar_modelo(renglon, columna, models.SiNo)
+def obtener_bool_columna(renglon, columna, catalogos):
+    catalogo = catalogos['SiNo']
+    clave = renglon[columna]
 
-
-def obtener_origen(renglon):
-    return buscar_modelo(renglon, ORIGEN, models.Origen)
-
-
-def obtener_sector(renglon):
-    return buscar_modelo(renglon, SECTOR, models.Sector)
-
-
-def obtener_entidad_um(renglon):
-    return buscar_modelo(renglon, ENTIDAD_UM, models.Entidad)
-
-
-def obtener_sexo(renglon):
-    return buscar_modelo(renglon, SEXO, models.Sexo)
-
-
-def obtener_entidad_nacimiento(renglon):
-    return buscar_modelo(renglon, ENTIDAD_NAC, models.Entidad)
-
-
-def obtener_entidad_residencia(renglon):
-    return buscar_modelo(renglon, ENTIDAD_RES, models.Entidad)
-
-
-def obtener_municipio(renglon):
-    consulta = {
-        'clave_municipio': MUNICIPIO_RES,
-        'entidad__clave': ENTIDAD_RES
-    }
-    return buscar_modelo(renglon, consulta, models.Municipio)
-
-
-def obtener_tipo_paciente(renglon):
-    return buscar_modelo(renglon, TIPO_PACIENTE, models.TipoPaciente)
-
-
-def obtener_edad(renglon):
-    return int(renglon[EDAD])
-
-
-def obtener_nacionalidad(renglon):
-    return buscar_modelo(renglon, NACIONALIDAD, models.Nacionalidad)
-
-
-def obtener_resultado(renglon):
-    return buscar_modelo(renglon, RESULTADO, models.Resultado)
+    try:
+        return catalogo[clave]
+    except Exception as error:
+        extra = {
+            'columna': columna,
+            'valor': clave}
+        logging.warning(str(error), extra=extra)
+        return None
 
 
 def obtener_pais_nacionalidad(renglon):
@@ -324,17 +295,31 @@ def obtener_pais_origen(renglon):
     return buscar_pais(renglon[PAIS_ORIGEN])
 
 
-def buscar_modelo(renglon, consulta, modelo):
-    if not isinstance(consulta, dict):
-        consulta = {'clave': renglon[consulta]}
+def buscar_catalogo(renglon, columna, catalogos):
+    clave = renglon[columna]
+    catalogo = catalogos[COLUMNAS_MODELOS[columna].__name__]
 
     try:
-        return modelo.objects.get(**consulta)
+        return catalogo[clave]
     except Exception as error:
-        extra = {
-            'modelo': modelo.__name__,
-            'consulta': consulta}
-        logging.warning(str(error), extra=extra)
+        if clave != models.Caso.NO_ESPECIFICADO:
+            extra = {
+                'columna': columna,
+                'valor': clave}
+            logging.warning(str(error), extra=extra)
+        return None
+
+
+def obtener_municipio(renglon, municipios):
+    consulta = (renglon[MUNICIPIO_RES], renglon[ENTIDAD_RES])
+    try:
+        return municipios[consulta]
+    except Exception as error:
+        if consulta[0] != 999:
+            extra = {
+                'columna': MUNICIPIO_RES,
+                'valor': consulta}
+            logging.warning(str(error), extra=extra)
         return None
 
 

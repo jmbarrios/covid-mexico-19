@@ -44,7 +44,7 @@ def actualizar_catalogo(catalogo):
         descripcion = renglon[COL_DESCRIPCION]
         _, creado = modelo.objects.get_or_create(
             clave=clave,
-            descripcion=descripcion)
+            descripcion=descripcion.strip())
 
         if creado:
             logging.info(
