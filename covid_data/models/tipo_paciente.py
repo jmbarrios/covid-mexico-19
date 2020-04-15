@@ -7,6 +7,5 @@ class TipoPaciente(ModeloBase):
     Se denomina como ambulatorio si regresó a su casa o se denomina como
     hospitalizado si fue ingresado a hospitalización.
     """
-
     clave = models.IntegerField(unique=True)
-    valor = models.CharField(max_length=63)
+    descripcion = models.CharField(max_length=63)

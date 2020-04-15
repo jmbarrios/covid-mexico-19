@@ -6,6 +6,5 @@ class Sector(ModeloBase):
     """Identifica el tipo de institución del Sistema Nacional de Salud
     que brindó la atención.
     """
-
     clave = models.IntegerField(unique=True)
-    valor = models.CharField(max_length=63)
+    descripcion = models.CharField(max_length=63)

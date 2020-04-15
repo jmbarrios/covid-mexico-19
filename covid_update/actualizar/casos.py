@@ -9,14 +9,7 @@ from tqdm import tqdm
 from django.conf import settings
 from django.db import transaction
 
-from covid_data.models import Resultado
-from covid_data.models import TipoPaciente
-from covid_data.models import Sector
-from covid_data.models import Origen
-from covid_data.models import Pais
-from covid_data.models import Caso
-from covid_data.models import Entidad
-from covid_data.models import Municipio
+from covid_data import models
 
 
 FECHA_REGEX_1 = re.compile(r'([0-9]{2}\.[0-9]{2}\.[0-9]{4})')
@@ -84,7 +77,7 @@ COLUMNAS_FECHA = {
     FECHA_DEF: 'fecha_defuncion',
 }
 
-COLUMNAS_BOOL = {
+COLUMNAS_SI_NO = {
     INTUBADO: 'intubado',
     NEUMONIA: 'neumonia',
     EMBARAZO: 'embarazo',
@@ -144,11 +137,11 @@ def actualizar_casos(log=None):
             **crear_consulta_relaciones(renglon),
             **crear_consulta(datos)}
 
-        if not Caso.objects.filter(**consulta).exists():
+        if not models.Caso.objects.filter(**consulta).exists():
             relaciones = obtener_relacionados(renglon)
-            nuevos_casos.append(Caso(**datos, **relaciones))
+            nuevos_casos.append(models.Caso(**datos, **relaciones))
 
-    Caso.objects.bulk_create(nuevos_casos)
+    models.Caso.objects.bulk_create(nuevos_casos)
 
 
 def extraer_fecha(nombre):
@@ -176,7 +169,6 @@ def obtener_datos(renglon):
         'sexo': obtener_sexo(renglon),
         'edad': obtener_edad(renglon),
         'nacionalidad': obtener_nacionalidad(renglon),
-        **extraer_columnas_booleanas(renglon),
         **extraer_columnas_fecha(renglon)
     }
 
@@ -193,6 +185,7 @@ def obtener_relacionados(renglon):
         'resultado': obtener_resultado(renglon),
         'pais_nacionalidad': obtener_pais_nacionalidad(renglon),
         'pais_origen': obtener_pais_origen(renglon),
+        **extraer_columnas_si_no(renglon),
     }
 
 
@@ -204,7 +197,7 @@ def crear_consulta_relaciones(renglon):
             continue
 
         valor = renglon[columna]
-        if columna != MUNICIPIO_RES and valor == Caso.NO_ESPECIFICADO:
+        if columna != MUNICIPIO_RES and valor == models.Caso.NO_ESPECIFICADO:
             consulta[f'{campo}__isnull'] = True
             continue
 
@@ -236,10 +229,10 @@ def crear_consulta(datos):
     return consulta
 
 
-def extraer_columnas_booleanas(renglon):
+def extraer_columnas_si_no(renglon):
     return {
         campo: extraer_bool_columna(renglon, columna)
-        for columna, campo in COLUMNAS_BOOL.items()
+        for columna, campo in COLUMNAS_SI_NO.items()
     }
 
 
@@ -253,7 +246,7 @@ def extraer_columnas_fecha(renglon):
 def extraer_bool_columna(renglon, columna):
     try:
         valor = int(renglon[columna])
-        return valor
+        return models.SiNo.objects.get(clave=valor)
     except Exception as error:
         extra = {'modelo': columna, 'consulta': valor}
         logging.warning(str(error).strip(), extra=extra)
@@ -278,15 +271,15 @@ def cast_fecha(fecha):
 
 
 def obtener_origen(renglon):
-    return buscar_modelo(renglon, {'clave': ORIGEN}, Origen)
+    return buscar_modelo(renglon, {'clave': ORIGEN}, models.Origen)
 
 
 def obtener_sector(renglon):
-    return buscar_modelo(renglon, {'clave': SECTOR}, Sector)
+    return buscar_modelo(renglon, {'clave': SECTOR}, models.Sector)
 
 
 def obtener_entidad_um(renglon):
-    return buscar_modelo(renglon, {'clave': ENTIDAD_UM}, Entidad)
+    return buscar_modelo(renglon, {'clave': ENTIDAD_UM}, models.Entidad)
 
 
 def obtener_sexo(renglon):
@@ -294,11 +287,11 @@ def obtener_sexo(renglon):
 
 
 def obtener_entidad_nacimiento(renglon):
-    return buscar_modelo(renglon, {'clave': ENTIDAD_NAC}, Entidad)
+    return buscar_modelo(renglon, {'clave': ENTIDAD_NAC}, models.Entidad)
 
 
 def obtener_entidad_residencia(renglon):
-    return buscar_modelo(renglon, {'clave': ENTIDAD_RES}, Entidad)
+    return buscar_modelo(renglon, {'clave': ENTIDAD_RES}, models.Entidad)
 
 
 def obtener_municipio(renglon):
@@ -306,11 +299,11 @@ def obtener_municipio(renglon):
         'clave_municipio': MUNICIPIO_RES,
         'entidad__clave': ENTIDAD_RES
     }
-    return buscar_modelo(renglon, consulta, Municipio)
+    return buscar_modelo(renglon, consulta, models.Municipio)
 
 
 def obtener_tipo_paciente(renglon):
-    return buscar_modelo(renglon, {'clave': TIPO_PACIENTE}, TipoPaciente)
+    return buscar_modelo(renglon, {'clave': TIPO_PACIENTE}, models.TipoPaciente)
 
 
 def obtener_edad(renglon):
@@ -322,7 +315,7 @@ def obtener_nacionalidad(renglon):
 
 
 def obtener_resultado(renglon):
-    return buscar_modelo(renglon, {'clave': RESULTADO}, Resultado)
+    return buscar_modelo(renglon, {'clave': RESULTADO}, models.Resultado)
 
 
 def obtener_pais_nacionalidad(renglon):
@@ -339,8 +332,8 @@ def buscar_modelo(renglon, mapeo_consulta, modelo):
         for campo, columna in mapeo_consulta.items()
     }
 
-    if 'clave' in consulta and modelo != Municipio:
-        if consulta['clave'] == Caso.NO_ESPECIFICADO:
+    if 'clave' in consulta and modelo != models.Municipio:
+        if consulta['clave'] == models.Caso.NO_ESPECIFICADO:
             return None
 
     try:
@@ -355,17 +348,17 @@ def buscar_modelo(renglon, mapeo_consulta, modelo):
 
 def buscar_pais(nombre):
     try:
-        return Pais.objects.filter(nombre__icontains=nombre).first()
+        return models.Pais.objects.filter(nombre__icontains=nombre).first()
     except:
         pass
 
     try:
-        return Pais.objects.filter(codigo__icontains=nombre).first()
+        return models.Pais.objects.filter(codigo__icontains=nombre).first()
     except:
         pass
 
     extra = {
-        'modelo': Pais.__nombre__,
+        'modelo': models.Pais.__name__,
         'consulta': {'nombre': nombre}}
     logging.warning('No se encontró un país', extra=extra)
     return None

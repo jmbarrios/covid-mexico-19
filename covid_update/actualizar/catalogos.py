@@ -41,15 +41,17 @@ def actualizar_catalogo(catalogo):
     modelo = CATALOGOS[catalogo]
 
     for clave, renglon in df.iterrows():
-        valor = renglon[COL_DESCRIPCION]
-        _, creado = modelo.objects.get_or_create(clave=clave, valor=valor)
+        descripcion = renglon[COL_DESCRIPCION]
+        _, creado = modelo.objects.get_or_create(
+            clave=clave,
+            descripcion=descripcion)
 
         if creado:
             logging.info(
-                '[%s] Entrada registrada: clave=%s, valor=%s',
+                '[%s] Entrada registrada: clave=%s, descripcion=%s',
                 catalogo,
                 clave,
-                valor)
+                descripcion)
 
 
 def cargar_catalogo(nombre):

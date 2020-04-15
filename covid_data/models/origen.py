@@ -11,6 +11,5 @@ class Origen(ModeloBase):
     epidemiológica, entre ellas las que cuenten con especialidad de neumología,
     infectología o pediatría. (Categorías en Catalógo Anexo).
     """
-
     clave = models.IntegerField(unique=True)
-    valor = models.CharField(max_length=63)
+    descripcion = models.CharField(max_length=63)

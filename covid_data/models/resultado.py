@@ -8,6 +8,5 @@ class Resultado(ModeloBase):
     Epidemiológica (INDRE, LESP y LAVE). (Catálogo de resultados diagnósticos
     anexo).
     """
-
     clave = models.IntegerField(unique=True)
-    valor = models.CharField(max_length=63)
+    descripcion = models.CharField(max_length=63)

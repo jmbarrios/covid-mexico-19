@@ -14,7 +14,7 @@ RUTA_ENTIDADES_SHP = os.path.join(
 
 MAPEO_CAMPOS = {
     'clave': 'CVE_ENT',
-    'nombre': 'NOMGEO',
+    'descripcion': 'NOMGEO',
     'geometria': 'POLYGON'
 }
 
