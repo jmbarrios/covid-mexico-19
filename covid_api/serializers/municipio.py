@@ -63,7 +63,7 @@ class MunicipioSerializer(serializers.ModelSerializer):
         }
 
 
-# @geojson_serializer('geometria')
+@geojson_serializer('geometria')
 class MunicipioGeoSerializer(MunicipioSerializer):
     class Meta:
         model = models.Municipio
@@ -91,3 +91,6 @@ class MunicipioGeoSerializer(MunicipioSerializer):
         extra_kwargs = {
             'url': {'view_name': 'municipio-detail', 'lookup_field': 'clave'}
         }
+
+
+MunicipioGeoSerializer.__name__ = 'MunicipioGeoSerializer'

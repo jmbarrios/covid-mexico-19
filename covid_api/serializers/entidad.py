@@ -82,3 +82,6 @@ class EntidadGeoSerializer(EntidadSerializer):
         extra_kwargs = {
             'url': {'view_name': 'entidad-detail', 'lookup_field': 'clave'}
         }
+
+
+EntidadGeoSerializer.__name__ = 'EntidadGeoSerializer'

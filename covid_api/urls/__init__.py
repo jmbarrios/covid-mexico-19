@@ -13,7 +13,7 @@ schema_view = get_schema_view(
       default_version='v1',
       description="API REST para la consulta de casos COVID-19 en México",
       terms_of_service="https://www.google.com/policies/terms/",
-      contact=openapi.Contact(email="smartinez@conabio.gob.mx"),
+      contact=openapi.Contact(name="CONABIO"),
       license=openapi.License(name="BSD License"),
    ),
    public=True,
