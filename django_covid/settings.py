@@ -35,9 +35,10 @@ ALLOWED_HOSTS = []
 INSTALLED_APPS = [
     'rest_framework',
     'django_filters',
-    # 'covid_api.apps.CovidApiConfig',
+    'covid_api.apps.CovidApiConfig',
     'covid_data.apps.CovidDataConfig',
     'covid_update.apps.CovidUpdateConfig',
+    'django-geojson_serializer',
     'django.contrib.gis',
     'django.contrib.admin',
     'django.contrib.auth',
