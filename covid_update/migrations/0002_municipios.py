@@ -25,7 +25,7 @@ def cargar_municipios(apps, schema_editor):
     capa = fuente[0]
 
     for municipio in capa:
-        nombre = municipio.get('NOMGEO')
+        descripcion = municipio.get('NOMGEO')
         clave_municipio = municipio.get('CVE_MUN')
         clave_entidad = municipio.get('CVE_ENT')
         clave = municipio.get('CVEGEO')
@@ -38,7 +38,7 @@ def cargar_municipios(apps, schema_editor):
 
         municipio, creado = Municipio.objects.get_or_create(
             clave=clave,
-            nombre=nombre,
+            descripcion=descripcion,
             defaults=dict(
                 clave_municipio=clave_municipio,
                 entidad=entidad,

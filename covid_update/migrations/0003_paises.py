@@ -19,12 +19,13 @@ def cargar_paises(apps, schema_editor):
     paises = pd.read_csv(RUTA_PAISES, index_col=0, encoding='latin-1')
 
     for _, pais in paises.iterrows():
-        nombre = pais['Economy']
+        descripcion = pais['Economy']
         codigo = pais['Code']
         region = pais['Region']
 
         pais, creado = Pais.objects.get_or_create(
-            nombre=nombre,
+            clave=codigo,
+            descripcion=descripcion,
             codigo=codigo,
             region=region)
 
