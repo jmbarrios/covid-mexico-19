@@ -1,5 +1,6 @@
-from covid_data import models
 from rest_framework import serializers
+from covid_data import models
+
 from geojson_serializer.serializers import geojson_serializer
 
 
@@ -105,13 +106,6 @@ class CasoSerializer(serializers.ModelSerializer):
                   'otras_com', 'cardiovascular', 'obesidad', 'renal_cronica',
                   'tabaquismo', 'otro_caso', 'resultado', 'migrante',
                   'pais_nacionalidad', 'pais_origen', 'uci']
-
-
-@geojson_serializer('geometria')
-class EntidadGeoSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = models.Entidad
-        fields = ['clave', 'descripcion', 'geometria']
 
 
 @geojson_serializer('geometria')
