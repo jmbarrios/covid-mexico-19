@@ -68,3 +68,15 @@ class CasoViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = models.Caso.objects.all()
     serializer_class = serializers.CasoSerializer
     filterset_class = filters.CasoFilter
+
+
+class EntidadGeoViewSet(viewsets.ReadOnlyModelViewSet):
+    queryset = models.Entidad.objects.all()
+    serializer_class = serializers.EntidadGeoSerializer
+    filterset_class = filters.EntidadFilter
+
+
+class MunicipioGeoViewSet(viewsets.ReadOnlyModelViewSet):
+    queryset = models.Municipio.objects.all()
+    serializer_class = serializers.MunicipioGeoSerializer
+    filterset_class = filters.MunicipioFilter
