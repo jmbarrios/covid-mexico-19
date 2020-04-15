@@ -5,62 +5,62 @@ from rest_framework import serializers
 class SexoSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Sexo
-        fields = ['clave', 'nombre']
+        fields = ['clave', 'descripcion']
 
 
 class OrigenSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Origen
-        fields = ['clave', 'valor']
+        fields = ['clave', 'descripcion']
 
 
 class SectorSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Sector
-        fields = ['clave', 'valor']
+        fields = ['clave', 'descripcion']
 
 
 class EntidadSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Entidad
-        fields = ['clave', 'nombre']
+        fields = ['clave', 'descripcion']
 
 
 class NacionalidadSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Nacionalidad
-        fields = ['clave', 'valor']
+        fields = ['clave', 'descripcion']
 
 
 class TipoPacienteSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.TipoPaciente
-        fields = ['clave', 'valor']
+        fields = ['clave', 'descripcion']
 
 
 class ResultadoSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Resultado
-        fields = ['clave', 'valor']
+        fields = ['clave', 'descripcion']
 
 
 class PaisSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Pais
-        fields = ['nombre', 'codigo', 'region']
+        fields = ['clave', 'codigo', 'region', 'descripcion']
 
 
 class MunicipioSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Municipio
         fields = ['clave', 'clave_municipio',
-                  'abreviatura', 'entidad', 'nombre']
+                  'abreviatura', 'entidad', 'descripcion']
 
 
 class SiNoSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.SiNo
-        fields = ['clave', 'valor']
+        fields = ['clave', 'descripcion']
 
 
 class CasoSerializer(serializers.ModelSerializer):
