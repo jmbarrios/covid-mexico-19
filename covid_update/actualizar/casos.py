@@ -19,7 +19,7 @@ def extraer_fecha_1(nombre):
     return f'{año}-{mes}-{dia}'
 
 
-FECHA_REGEX_2 = re.compile(r'(20[0-9]{2}[0-9]{4})')
+FECHA_REGEX_2 = re.compile(r'(20[0-9]{2}[0-9]{2})')
 def extraer_fecha_2(nombre):
     fecha = FECHA_REGEX_2.search(nombre).group(0)
     año = '20' + fecha[:2]
@@ -108,7 +108,12 @@ COLUMNAS_RELACIONALES = {
     RESULTADO: 'resultado',
     PAIS_NACIONALIDAD: 'pais_nacionalidad',
     PAIS_ORIGEN: 'pais_origen',
+    SEXO: 'sexo',
+    NACIONALIDAD: 'nacionalidad',
+    **COLUMNAS_SI_NO
 }
+
+COLUMNAS_ESPACIALES = {ENTIDAD_UM, ENTIDAD_NAC, ENTIDAD_RES, MUNICIPIO_RES}
 
 CAMPOS_ENTIDAD = {'entidad_um', 'entidad_nacimiento', 'entidad_residencia'}
 CAMPOS_MUNICIPIO = {'municipio_residencia'}
@@ -126,7 +131,7 @@ def actualizar_casos(log=None):
             level=logging.INFO,
             format=FORMATO)
 
-    ultima_tabla = obtener_ultima_tabla()
+    ultima_tabla = obtener_ultima_tabla()[:100]
 
     renglones = len(ultima_tabla)
     nuevos_casos = []
@@ -145,13 +150,14 @@ def actualizar_casos(log=None):
 
 
 def extraer_fecha(nombre):
+    errores = []
     for parser in PARSERS_FECHA:
         try:
             return parser(nombre)
-        except:
-            pass
+        except Exception as error:
+            errores.append(error)
 
-    raise ValueError(f'Fecha irreconocible: {nombre}')
+    raise ValueError(f'Fecha irreconocible: {nombre}. Errores: {errores}')
 
 
 def obtener_ultima_tabla():
@@ -166,9 +172,7 @@ def obtener_ultima_tabla():
 
 def obtener_datos(renglon):
     return {
-        'sexo': obtener_sexo(renglon),
         'edad': obtener_edad(renglon),
-        'nacionalidad': obtener_nacionalidad(renglon),
         **extraer_columnas_fecha(renglon)
     }
 
@@ -185,7 +189,9 @@ def obtener_relacionados(renglon):
         'resultado': obtener_resultado(renglon),
         'pais_nacionalidad': obtener_pais_nacionalidad(renglon),
         'pais_origen': obtener_pais_origen(renglon),
-        **extraer_columnas_si_no(renglon),
+        'sexo': obtener_sexo(renglon),
+        'nacionalidad': obtener_nacionalidad(renglon),
+        **obtener_columnas_si_no(renglon),
     }
 
 
@@ -197,7 +203,7 @@ def crear_consulta_relaciones(renglon):
             continue
 
         valor = renglon[columna]
-        if columna != MUNICIPIO_RES and valor == models.Caso.NO_ESPECIFICADO:
+        if columna in COLUMNAS_ESPACIALES and valor == models.Caso.NO_ESPECIFICADO:
             consulta[f'{campo}__isnull'] = True
             continue
 
@@ -229,28 +235,11 @@ def crear_consulta(datos):
     return consulta
 
 
-def extraer_columnas_si_no(renglon):
-    return {
-        campo: extraer_bool_columna(renglon, columna)
-        for columna, campo in COLUMNAS_SI_NO.items()
-    }
-
-
 def extraer_columnas_fecha(renglon):
     return {
         campo: extraer_fecha_columna(renglon, columna)
         for columna, campo in COLUMNAS_FECHA.items()
     }
-
-
-def extraer_bool_columna(renglon, columna):
-    try:
-        valor = int(renglon[columna])
-        return models.SiNo.objects.get(clave=valor)
-    except Exception as error:
-        extra = {'modelo': columna, 'consulta': valor}
-        logging.warning(str(error).strip(), extra=extra)
-        return None
 
 
 def extraer_fecha_columna(renglon, columna):
@@ -270,6 +259,17 @@ def cast_fecha(fecha):
     return datetime.date.fromisoformat(fecha)
 
 
+def obtener_columnas_si_no(renglon):
+    return {
+        campo: obtener_bool_columna(renglon, columna)
+        for columna, campo in COLUMNAS_SI_NO.items()
+    }
+
+
+def obtener_bool_columna(renglon, columna):
+    return buscar_modelo(renglon, {'clave': columna}, models.SiNo)
+
+
 def obtener_origen(renglon):
     return buscar_modelo(renglon, {'clave': ORIGEN}, models.Origen)
 
@@ -283,7 +283,7 @@ def obtener_entidad_um(renglon):
 
 
 def obtener_sexo(renglon):
-    return int(renglon[SEXO])
+    return buscar_modelo(renglon, {'clave': SEXO}, models.Sexo)
 
 
 def obtener_entidad_nacimiento(renglon):
@@ -311,7 +311,7 @@ def obtener_edad(renglon):
 
 
 def obtener_nacionalidad(renglon):
-    return int(renglon[NACIONALIDAD])
+    return buscar_modelo(renglon, {'clave': NACIONALIDAD}, models.Nacionalidad)
 
 
 def obtener_resultado(renglon):
