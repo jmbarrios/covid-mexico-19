@@ -9,6 +9,7 @@ django-filters==0.2.1
 django-geojson-serializer==0.2
 django-rest-framework==0.1.0
 djangorestframework==3.11.0
+djangorestframework-csv==2.1.0
 drf-yasg==1.17.1
 idna==2.9
 inflection==0.4.0
@@ -28,5 +29,6 @@ ruamel.yaml.clib==0.2.0
 six==1.14.0
 sqlparse==0.3.1
 tqdm==4.45.0
+unicodecsv==0.14.1
 uritemplate==3.0.1
 urllib3==1.25.8

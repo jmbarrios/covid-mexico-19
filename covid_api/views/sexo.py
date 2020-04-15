@@ -1,11 +1,11 @@
 from rest_framework import viewsets
 
 from covid_data import models
-from covid_api import serializers
 from covid_api import filters
+from covid_api.serializers import otros
 
 
 class SexoViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = models.Sexo.objects.all()
-    serializer_class = serializers.SexoSerializer
+    serializer_class = otros.SexoSerializer
     filterset_class = filters.SexoFilter
