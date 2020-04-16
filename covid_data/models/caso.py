@@ -8,7 +8,8 @@ class Caso(ModeloBase):
     fecha_actualizacion = models.DateField(
         help_text=(
             'La base de datos se alimenta diariamente, esta variable permite '
-            'identificar la fecha de la ultima actualizacion.'))
+            'identificar la fecha de la ultima actualizacion.'),
+        null=True)
     origen = models.ForeignKey(
         'Origen',
         on_delete=models.PROTECT,
