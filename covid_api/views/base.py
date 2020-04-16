@@ -4,6 +4,21 @@ from rest_framework import renderers
 from rest_framework_csv.renderers import CSVRenderer
 
 
+class PaginatedCSVRenderer(CSVRenderer):
+    def render(self, data, media_type=None, renderer_context=None):
+        return super().render(
+            data['results'],
+            media_type=media_type,
+            renderer_context=renderer_context)
+
+
+renderer_classes = [
+    renderers.JSONRenderer,
+    renderers.BrowsableAPIRenderer,
+    PaginatedCSVRenderer
+]
+
+
 class CatalogoViewSet(
         mixins.ListModelMixin,
         viewsets.GenericViewSet):

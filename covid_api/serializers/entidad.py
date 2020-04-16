@@ -17,19 +17,32 @@ class EntidadSimpleSerializer(serializers.ModelSerializer):
 
 
 class EntidadSerializer(serializers.ModelSerializer):
-    casos_confirmados = serializers.IntegerField()
-    casos_sospechosos = serializers.IntegerField()
-    casos_descartados = serializers.IntegerField()
-    defunciones_confirmadas = serializers.IntegerField()
-    defunciones_sospechosas = serializers.IntegerField()
-    intubados_confirmados = serializers.IntegerField()
-    intubados_sospechosos = serializers.IntegerField()
-    casos_hospitalizados = serializers.IntegerField()
-    casos_hospitalizados_sospechosos = serializers.IntegerField()
-    casos_ambulatorios = serializers.IntegerField()
-    casos_ambulatorios_sospechosos = serializers.IntegerField()
-    criticos_confirmados = serializers.IntegerField()
-    criticos_sospechosos = serializers.IntegerField()
+    casos_positivos = serializers.IntegerField(
+        help_text='Número de casos confirmados.')
+    casos_negativos = serializers.IntegerField(
+        help_text='Número de casos negativos.')
+    casos_sospechosos = serializers.IntegerField(
+        help_text='Número de casos sospechosos.')
+    defunciones_confirmadas = serializers.IntegerField(
+        help_text='Número de defunciones de casos confirmados.')
+    defunciones_sospechosas = serializers.IntegerField(
+        help_text='Número de defunciones de casos sospechosos')
+    intubados_confirmados = serializers.IntegerField(
+        help_text='Número de casos confirmados que han sido intubados')
+    intubados_sospechosos = serializers.IntegerField(
+        help_text='Número de casos sospechosos que han sido intubados')
+    hospitalizados_confirmados = serializers.IntegerField(
+        help_text='Número de casos confirmados que han sido hospitalizados')
+    hospitalizados_sospechosos = serializers.IntegerField(
+        help_text='Número de casos sospechosos que han sido hospitalizados')
+    ambulatorios_confirmados = serializers.IntegerField(
+        help_text='Número de casos confirmados que son ambulatorios')
+    ambulatorios_sospechosos = serializers.IntegerField(
+        help_text='Número de casos sospechosos que son ambulatorios')
+    criticos_confirmados = serializers.IntegerField(
+        help_text='Número de casos confirmados que has sido ingresados a una unidad de cuidados intensivos')
+    criticos_sospechosos = serializers.IntegerField(
+        help_text='Número de casos sospechosos que has sido ingresados a una unidad de cuidados intensivos')
 
     class Meta:
         model = models.Entidad
@@ -37,17 +50,17 @@ class EntidadSerializer(serializers.ModelSerializer):
             'url',
             'clave',
             'descripcion',
-            'casos_confirmados',
+            'casos_positivos',
+            'casos_negativos',
             'casos_sospechosos',
-            'casos_descartados',
             'defunciones_confirmadas',
             'defunciones_sospechosas',
             'intubados_confirmados',
             'intubados_sospechosos',
-            'casos_hospitalizados',
-            'casos_hospitalizados_sospechosos',
-            'casos_ambulatorios',
-            'casos_ambulatorios_sospechosos',
+            'hospitalizados_confirmados',
+            'hospitalizados_sospechosos',
+            'ambulatorios_confirmados',
+            'ambulatorios_sospechosos',
             'criticos_confirmados',
             'criticos_sospechosos',
         ]
@@ -65,17 +78,17 @@ class EntidadGeoSerializer(EntidadSerializer):
             'clave',
             'descripcion',
             'geometria',
-            'casos_confirmados',
+            'casos_positivos',
+            'casos_negativos',
             'casos_sospechosos',
-            'casos_descartados',
             'defunciones_confirmadas',
             'defunciones_sospechosas',
             'intubados_confirmados',
             'intubados_sospechosos',
-            'casos_hospitalizados',
-            'casos_hospitalizados_sospechosos',
-            'casos_ambulatorios',
-            'casos_ambulatorios_sospechosos',
+            'hospitalizados_confirmados',
+            'hospitalizados_sospechosos',
+            'ambulatorios_confirmados',
+            'ambulatorios_sospechosos',
             'criticos_confirmados',
             'criticos_sospechosos',
         ]
