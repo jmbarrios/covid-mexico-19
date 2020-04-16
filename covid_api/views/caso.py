@@ -32,8 +32,25 @@ class CasoViewSet(viewsets.ReadOnlyModelViewSet):
 
     @method_decorator(cache_page(60*60*2))
     def list(self, *args, **kwargs):
+        """
+        Listado de casos registrados con descriptores.
+
+        El conjunto de datos puede ser filtrado de acuerdo a los parámetros
+        que se describen en el listado de abajo para producir subconjuntos de
+        interés en la respuesta. Ejemplo:
+
+            <host>/api/caso?edad_lt=65&fecha_defuncion_lt=2020-04-05
+        """
         return super().list(*args, **kwargs)
 
     @method_decorator(cache_page(60*60*2))
     def retrieve(self, *args, **kwargs):
+        """Detalle de información por caso.
+
+        Despliega la información desglosada de cada caso accediendo por
+        clave. Cada detalle contiene la información que se enlista abajo.
+        Ejemplo para el objeto con clave 10:
+
+            <host>/api/caso/10/
+        """
         return super().retrieve(*args, **kwargs)
