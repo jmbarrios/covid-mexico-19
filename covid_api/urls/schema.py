@@ -7,8 +7,19 @@ description = """
 
 Estos servicios presetan la información liberada diariamente por la Dirección
 General de Epidemiología de la Secretaría de Salud de la República Mexicana
-referente a la actual epidemia de COVID-19. La fuente de datos es descargada y
-formateada en tiempo real al momento de su liberación desde la fuente.
+referente a la actual epidemia de COVID-19. Los datos originales son
+descargados desde la dirección:
+
+http://187.191.75.115/gobmx/salud/datos_abiertos
+
+Posteriormente, la información es formateada e ingresada al API como una
+inserción atómica en bloque, de manera que no se regresan resultados de
+actualizaciones parciales.
+
+Todos los valores de los campos corresponden a lo establecido en el diccionario
+de datos liberado en:
+
+http://187.191.75.115/gobmx/salud/datos_abiertos/diccionario_datos_covid19.zip
 
 ### Comparadores
 A través de este API se puede consultar la información haciendo filtros sobre
