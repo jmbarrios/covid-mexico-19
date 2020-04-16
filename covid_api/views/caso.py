@@ -12,6 +12,14 @@ class CasoViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = models.Caso.objects.all()
     filterset_class = filters.CasoFilter
     renderer_classes = renderer_classes
+    ordering = ['fecha_ingreso']
+    ordering_fields = [
+        'fecha_ingreso',
+        'fecha_sintomas',
+        'fecha_defuncion',
+        'fecha_actualizacion',
+        'edad',
+    ]
 
     def get_serializer_class(self, *args, **kwargs):
         if self.action == 'list':

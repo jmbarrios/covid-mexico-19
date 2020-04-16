@@ -14,6 +14,25 @@ class MunicipioViewSet(viewsets.ReadOnlyModelViewSet):
     filterset_class = filters.MunicipioFilter
     lookup_field = 'clave'
     renderer_classes = renderer_classes
+    ordering = ['casos_positivos']
+    ordering_fields = [
+        'casos_positivos',
+        'casos_negativos',
+        'casos_sospechosos',
+        'defunciones_confirmadas',
+        'defunciones_sospechosas',
+        'intubados_confirmados',
+        'intubados_sospechosos',
+        'hospitalizados_confirmados',
+        'hospitalizados_sospechosos',
+        'ambulatorios_confirmados',
+        'ambulatorios_sospechosos',
+        'criticos_confirmados',
+        'criticos_sospechosos',
+        'clave',
+        'clave_municipio',
+        'entidad',
+    ]
 
     @method_decorator(cache_page(60*60*2))
     def list(self, *args, **kwargs):

@@ -97,21 +97,6 @@ COLUMNAS_SI_NO = {
     UCI: 'uci',
 }
 
-COLUMNAS_RELACIONALES = {
-    ORIGEN: 'origen',
-    SECTOR: 'sector',
-    ENTIDAD_UM: 'entidad_um',
-    ENTIDAD_NAC: 'entidad_nacimiento',
-    ENTIDAD_RES: 'entidad_residencia',
-    MUNICIPIO_RES: 'municipio_residencia',
-    TIPO_PACIENTE: 'tipo_paciente',
-    RESULTADO: 'resultado',
-    PAIS_NACIONALIDAD: 'pais_nacionalidad',
-    PAIS_ORIGEN: 'pais_origen',
-    SEXO: 'sexo',
-    NACIONALIDAD: 'nacionalidad',
-    **COLUMNAS_SI_NO
-}
 
 COLUMNAS_MODELOS = {
     NACIONALIDAD: models.Nacionalidad,
@@ -124,10 +109,6 @@ COLUMNAS_MODELOS = {
     SEXO: models.Sexo,
     SECTOR: models.Sector,
 }
-
-COLUMNAS_ESPACIALES = {ENTIDAD_UM, ENTIDAD_NAC, ENTIDAD_RES, MUNICIPIO_RES}
-CAMPOS_MUNICIPIO = {'municipio_residencia'}
-CAMPOS_PAIS = {'pais_nacionalidad', 'pais_origen'}
 
 
 @transaction.atomic
@@ -182,6 +163,8 @@ def extraer_fecha(nombre):
 
 
 def eliminar_repetidos(ultima, anterior):
+    # TODO: Eliminar todos los renglones de la tabla ultima que están
+    # en al tabla anterior
     return ultima
 
 
