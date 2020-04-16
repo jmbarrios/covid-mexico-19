@@ -47,9 +47,9 @@ def cargar_entidades(apps, schema_editor):
 
 
 class Migration(migrations.Migration):
-    # dependencies = [
-    #     ('covid_update')
-    # ]
+    dependencies = [
+        ('covid_update', '0001_actualizacion'),
+    ]
     operations = [
         migrations.RunPython(cargar_entidades)
     ]

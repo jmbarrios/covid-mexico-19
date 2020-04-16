@@ -56,7 +56,7 @@ def cargar_municipios(apps, schema_editor):
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('covid_update', '0001_entidades'),
+        ('covid_update', '0002_entidades'),
     ]
 
     operations = [

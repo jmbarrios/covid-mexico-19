@@ -36,7 +36,7 @@ def cargar_paises(apps, schema_editor):
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('covid_update', '0002_municipios'),
+        ('covid_update', '0003_municipios'),
     ]
 
     operations = [
