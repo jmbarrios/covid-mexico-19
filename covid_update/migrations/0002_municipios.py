@@ -8,7 +8,7 @@ from django.contrib.gis.geos import GEOSGeometry
 from django.contrib.gis.gdal import DataSource
 
 
-RUTA_ENTIDADES_SHP = os.path.join(
+RUTA_MUNICIPIOS_SHP = os.path.join(
     os.path.dirname(os.path.dirname(__file__)),
     'data',
     'marco_geoestadistico',
@@ -21,7 +21,7 @@ def cargar_municipios(apps, schema_editor):
     Entidad = apps.get_model("covid_data", "Entidad")
     Municipio = apps.get_model("covid_data", "Municipio")
 
-    fuente = DataSource(RUTA_ENTIDADES_SHP)
+    fuente = DataSource(RUTA_MUNICIPIOS_SHP)
     capa = fuente[0]
 
     for municipio in capa:
@@ -33,8 +33,12 @@ def cargar_municipios(apps, schema_editor):
         entidad = Entidad.objects.get(clave=clave_entidad)
         geometria = municipio.geom
 
+        geometria = GEOSGeometry(geometria.wkt, srid=6372)
+        geometria_web = geometria.transform(3857, clone=True)
+
         if geometria.geom_type == 'Polygon':
-            geometria = MultiPolygon(GEOSGeometry(geometria.wkt))
+            geometria = MultiPolygon(geometria)
+            geometria_web = MultiPolygon(geometria_web)
 
         municipio, creado = Municipio.objects.get_or_create(
             clave=clave,
@@ -42,7 +46,8 @@ def cargar_municipios(apps, schema_editor):
             defaults=dict(
                 clave_municipio=clave_municipio,
                 entidad=entidad,
-                geometria=geometria.wkt))
+                geometria=geometria,
+                geometria_web=geometria_web))
 
         if creado:
             print(f'Municipio creado {municipio}')

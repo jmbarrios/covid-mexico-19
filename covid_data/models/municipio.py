@@ -12,7 +12,9 @@ class Municipio(ModeloBase):
     entidad = models.ForeignKey(
         'Entidad',
         on_delete=models.CASCADE)
+
     geometria = MultiPolygonField()
+    geometria_web = MultiPolygonField()
 
     def __repr__(self):
         return self.descripcion

@@ -2,7 +2,10 @@
 import os
 
 from django.db import migrations
-from django.contrib.gis.utils import LayerMapping
+from django.db import transaction
+from django.contrib.gis.geos import MultiPolygon
+from django.contrib.gis.geos import GEOSGeometry
+from django.contrib.gis.gdal import DataSource
 
 
 RUTA_ENTIDADES_SHP = os.path.join(
@@ -12,28 +15,41 @@ RUTA_ENTIDADES_SHP = os.path.join(
     'ent',
     '01_32_ent.shp')
 
-MAPEO_CAMPOS = {
-    'clave': 'CVE_ENT',
-    'descripcion': 'NOMGEO',
-    'geometria': 'POLYGON'
-}
 
-
+@transaction.atomic
 def cargar_entidades(apps, schema_editor):
     Entidad = apps.get_model("covid_data", "Entidad")
-    lm = LayerMapping(
-        Entidad,
-        RUTA_ENTIDADES_SHP,
-        MAPEO_CAMPOS,
-        transform=False)
-    lm.save(strict=True, verbose=True)
+
+    fuente = DataSource(RUTA_ENTIDADES_SHP)
+    capa = fuente[0]
+
+    for entidad in capa:
+        descripcion = entidad.get('NOMGEO')
+        clave = entidad.get('CVE_ENT')
+
+        geometria = entidad.geom
+        geometria = GEOSGeometry(geometria.wkt, srid=6372)
+        geometria_web = geometria.transform(3857, clone=True)
+
+        if geometria.geom_type == 'Polygon':
+            geometria = MultiPolygon(geometria)
+            geometria_web = MultiPolygon(geometria_web)
+
+        entidad, creado = Entidad.objects.get_or_create(
+            clave=clave,
+            descripcion=descripcion,
+            defaults=dict(
+                geometria=geometria,
+                geometria_web=geometria_web))
+
+        if creado:
+            print(f'entidad creado {entidad}')
 
 
 class Migration(migrations.Migration):
-    dependencies = [
-        ('covid_data', '0001_initial')
-    ]
-
+    # dependencies = [
+    #     ('covid_update')
+    # ]
     operations = [
         migrations.RunPython(cargar_entidades)
     ]
