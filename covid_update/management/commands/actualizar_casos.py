@@ -19,13 +19,13 @@ class Command(BaseCommand):
             '--verbose',
             action='store_true')
         parser.add_argument(
-            '--no-descargar',
+            '--descargar',
             action='store_true',
             help='Descargar los datos',
         )
 
     def handle(self, *args, **options):
-        if not options['no_descargar']:
+        if options['descargar']:
             descargar_datos()
 
         log = options.get('log', None)
@@ -43,4 +43,17 @@ class Command(BaseCommand):
 
         if options['verbose']:
             log = None
-        actualizar_casos(log=log)
+        codigo = actualizar_casos(log=log)
+
+        if codigo == 0:
+            mensaje = 'Datos actualizados correctamente'
+            self.stdout.write(self.style.SUCCESS(mensaje))
+        elif codigo == 1:
+            mensaje = (
+                'No hay datos nuevos que actualizar. Si no los '
+                'has descargado corre de nuevo con la opción '
+                '--descargar.')
+            self.stdout.write(self.style.WARNING(mensaje))
+        else:
+            mensaje = 'Error inesperado'
+            self.stdout.write(self.style.ERROR(mensaje))

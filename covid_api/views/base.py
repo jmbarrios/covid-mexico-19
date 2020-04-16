@@ -19,9 +19,16 @@ renderer_classes = [
 ]
 
 
-class CatalogoViewSet(
+class ListViewSet(
         mixins.ListModelMixin,
         viewsets.GenericViewSet):
+    renderer_classes = [
+        renderers.JSONRenderer,
+        renderers.BrowsableAPIRenderer,
+        CSVRenderer]
+
+
+class CatalogoViewSet(ListViewSet):
     page_size = None
     pagination_class = None
     renderer_classes = [

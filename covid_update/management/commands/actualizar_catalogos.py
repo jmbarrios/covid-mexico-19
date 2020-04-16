@@ -10,14 +10,19 @@ class Command(BaseCommand):
 
     def add_arguments(self, parser):
         parser.add_argument(
-            '--no-descargar',
+            '--descargar',
             action='store_true',
-            help='Descargar los datos',
+            help='Descargar los catalogos',
+        )
+        parser.add_argument(
+            '--forzar',
+            action='store_true',
+            help='Sobree escribir los archivos de catalogos',
         )
 
-    def handle(self, *args, **options):
-        if not options['no_descargar']:
-            descargar_catalogos()
+    def handle(self, *args, **opciones):
+        if not opciones['descargar']:
+            descargar_catalogos(forzar=opciones['forzar'])
 
         procesar_catalogos()
         actualizar_catalogos()

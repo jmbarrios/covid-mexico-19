@@ -1,6 +1,5 @@
 import os
 import glob
-import re
 import logging
 import datetime
 import pandas as pd
@@ -10,30 +9,12 @@ from django.conf import settings
 from django.db import transaction
 
 from covid_data import models
-
-
-FECHA_REGEX_1 = re.compile(r'([0-9]{2}\.[0-9]{2}\.[0-9]{4})')
-def extraer_fecha_1(nombre):
-    fecha = FECHA_REGEX_1.search(nombre).group(0)
-    dia, mes, año = fecha.split('.')
-    return f'{año}-{mes}-{dia}'
-
-
-FECHA_REGEX_2 = re.compile(r'(20[0-9]{2}[0-9]{2})')
-def extraer_fecha_2(nombre):
-    fecha = FECHA_REGEX_2.search(nombre).group(0)
-    año = '20' + fecha[:2]
-    mes = fecha[2:4]
-    dia = fecha[4:]
-    return f'{año}-{mes}-{dia}'
+from covid_update.models import Actualizacion
+from covid_update.actualizar.fechas import PARSERS_FECHA
 
 
 FORMATO = '%(levelname)s:: %(message)s %(columna)s %(valor)s'
 ENCODING = 'latin-1'
-PARSERS_FECHA = [
-    extraer_fecha_1,
-    extraer_fecha_2
-]
 
 FECHA_ACTUALIZACION = 'FECHA_ACTUALIZACION'
 ORIGEN = 'ORIGEN'
@@ -122,12 +103,13 @@ def actualizar_casos(log=None):
             level=logging.INFO,
             format=FORMATO)
 
-    tablas = obtener_ultimas_tablas()
+    archivo = obtener_ultimo_archivo()
 
-    if len(tablas) == 2:
-        tabla = eliminar_repetidos(*tablas)
-    else:
-        tabla = tablas[0]
+    if not es_nuevo_archivo(archivo):
+        return 1
+
+    borrar_casos_anteriores()
+    tabla = cargar_tabla(archivo)
 
     catalogos = cargar_catalogos()
     municipios = cargar_municipios()
@@ -137,18 +119,31 @@ def actualizar_casos(log=None):
     for _, renglon in tqdm(tabla.iterrows(), total=renglones):
         datos = obtener_datos(renglon, catalogos, municipios)
         nuevos_casos.append(models.Caso(**datos))
-
     models.Caso.objects.bulk_create(nuevos_casos)
 
+    guardar_actualizacion(archivo, log)
+    return 0
 
-def obtener_ultimas_tablas():
+
+def obtener_ultimo_archivo():
     directorio = os.path.join(
         settings.BASE_DIR,
         settings.DATOS_BASE_DIR,
         settings.CASOS_DIR)
     tablas = glob.glob(os.path.join(directorio, '*.csv'))
-    rutas = sorted(tablas, key=extraer_fecha, reverse=True)[:2]
-    return [pd.read_csv(ruta, encoding=ENCODING) for ruta in rutas]
+    return sorted(tablas, key=extraer_fecha, reverse=True)[0]
+
+
+def es_nuevo_archivo(archivo):
+    return not Actualizacion.objects.filter(archivo=archivo).exists()
+
+
+def borrar_casos_anteriores():
+    models.Caso.objects.raw('DELETE FROM covid_data_caso')
+
+
+def cargar_tabla(ruta):
+    return pd.read_csv(ruta, encoding=ENCODING)
 
 
 def extraer_fecha(nombre):
@@ -160,12 +155,6 @@ def extraer_fecha(nombre):
             errores.append(error)
 
     raise ValueError(f'Fecha irreconocible: {nombre}. Errores: {errores}')
-
-
-def eliminar_repetidos(ultima, anterior):
-    # TODO: Eliminar todos los renglones de la tabla ultima que están
-    # en al tabla anterior
-    return ultima
 
 
 def cargar_catalogos():
@@ -322,3 +311,8 @@ def buscar_pais(nombre):
         'consulta': {'nombre': nombre}}
     logging.warning('No se encontró un país', extra=extra)
     return None
+
+
+def guardar_actualizacion(archivo, log):
+    actualizacion = Actualizacion(archivo=archivo, log=log)
+    actualizacion.save()
