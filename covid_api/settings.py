@@ -14,4 +14,5 @@ COVID_API_APPS = [
     'drf_yasg',
     'rest_framework',
     'django_filters',
+    'crispy_forms',
 ]
