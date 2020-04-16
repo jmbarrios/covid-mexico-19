@@ -8,3 +8,9 @@ class Sector(ModeloBase):
     """
     clave = models.IntegerField(unique=True)
     descripcion = models.CharField(max_length=63)
+
+    def __repr__(self):
+        return self.descripcion
+
+    def __str__(self):
+        return self.descripcion

@@ -11,6 +11,12 @@ class Entidad(ModeloBase):
     descripcion = models.CharField(max_length=80)
     geometria = MultiPolygonField()
 
+    def __repr__(self):
+        return self.descripcion
+
+    def __str__(self):
+        return self.descripcion
+
     @cached_property
     def casos_confirmados(self):
         return Caso.objects.filter(

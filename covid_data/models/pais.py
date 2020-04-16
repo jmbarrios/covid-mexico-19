@@ -8,3 +8,9 @@ class Pais(ModeloBase):
 
     codigo = models.CharField(max_length=3)
     region = models.CharField(max_length=31)
+
+    def __repr__(self):
+        return self.descripcion
+
+    def __str__(self):
+        return self.descripcion
