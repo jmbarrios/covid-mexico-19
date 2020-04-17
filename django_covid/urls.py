@@ -19,5 +19,6 @@ from django.conf.urls import url, include
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    url('', include('covid_mapa.urls')),
     url('api/', include('covid_api.urls')),
 ]

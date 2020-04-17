@@ -39,6 +39,7 @@ INSTALLED_APPS = (
     [
         'covid_data.apps.CovidDataConfig',
         'covid_update.apps.CovidUpdateConfig',
+        'covid_mapa.apps.CovidMapaConfig',
         'corsheaders',
         'django.contrib.gis',
         'django.contrib.admin',

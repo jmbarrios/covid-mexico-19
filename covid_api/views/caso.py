@@ -105,7 +105,7 @@ class CasoViewSet(ListViewSet):
         return Response(serializer.data)
 
     @action(detail=False, serializer_class=caso.CasoGeoSerializer)
-    def geo(self, request, **kwargs):
+    def centroide(self, request, **kwargs):
         queryset = self.get_queryset()
         queryset = self.filter_queryset(queryset)
 
