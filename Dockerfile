@@ -16,7 +16,7 @@ COPY . /code/
 #RUN chgrp postgres /var/lib/postgresql/10/main 
 #RUN chmod -R 0700 /var/lib/postgresql/10/
 #RUN su postgres
-#RUN /var/lib/postgresql/10/bin/initdb /var/lib/postgresql/10/main/
+#RUN /var/lib/postgresql/10/bin/initdb -D /var/lib/postgresql/10/main/
 #RUN exit
 #RUN service postgresql start
 #RUN su postgres
