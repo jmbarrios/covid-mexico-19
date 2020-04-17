@@ -6,11 +6,11 @@ from rest_framework.response import Response
 
 from covid_data import models
 from covid_api import filters
-from covid_api.views.base import ListViewSet
+from covid_api.views.base import ListRetrieveViewSet
 from covid_api.serializers import municipio
 
 
-class MunicipioViewSet(ListViewSet):
+class MunicipioViewSet(ListRetrieveViewSet):
     queryset = models.Municipio.objects.all()
     filterset_class = filters.MunicipioFilter
     serializer_class = municipio.MunicipioSerializer

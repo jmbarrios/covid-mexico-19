@@ -12,3 +12,13 @@ class ListViewSet(
         renderers.JSONRenderer,
         renderers.BrowsableAPIRenderer,
         CSVRenderer]
+
+
+class ListRetrieveViewSet(
+        mixins.ListModelMixin,
+        mixinx.RetrieveModelMixin,
+        viewsets.GenericViewSet):
+    renderer_classes = [
+        renderers.JSONRenderer,
+        renderers.BrowsableAPIRenderer,
+        CSVRenderer]
