@@ -2,9 +2,9 @@ version: '3.1'
 
 services:
   db:
-    image: kartoza/postgis
+    image: mdillon/postgis
     ports:
-      - "${POSTGRES_PORT}:5432"
+      - "9132:5432"
     env_file:
       - covid.env
   covid_services:
