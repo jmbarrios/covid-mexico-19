@@ -41,7 +41,7 @@ class MunicipioViewSet(ListViewSet):
         Listado de municipios de la República Mexicana.
 
         Regresa la lista de municipios con la clave de asociación usada en el
-        modelo de 'caso' junto con descriptores y el número de casos
+        modelo de *caso* junto con descriptores y el número de casos
         registrados hasta el momento. Ejemplo\:
 
             <host:port>/api/municipio?casos_gt=100&descripcion_contiene=Oaxaca de Juárez
@@ -55,11 +55,9 @@ class MunicipioViewSet(ListViewSet):
         """Detalle de información por municipio.
 
         Despliega la información desglosada de cada municipio accediendo por
-        clave. Cada detalle incluye la información que se enlista abajo. El
-        campo de geometría se presenta en EPSG:4326. Ejemplo para el municipio
-        con clave 230:
+        clave. Ejemplo para el municipio con clave 230:
 
-            <host:port>/api/municipio/230/
+            <host:port>/api/municipio/230
 
         Fuente\: https://www.inegi.org.mx/app/biblioteca/ficha.html?upc=889463674658
         """
@@ -67,6 +65,16 @@ class MunicipioViewSet(ListViewSet):
 
     @action(detail=False, serializer_class=municipio.MunicipioGeoSerializer)
     def geo(self, request, **kwargs):
+        """
+        Listado de municipios de la República Mexicana con geometría.
+
+        Regresa la lista de municipios incluyendo la geometría en formato *GeoJSON*.
+        Ejemplo\:
+
+            <host:port>/api/municipio/geo?casos_gt=100&descripcion_contiene=Oaxaca de Juárez
+
+        Fuente\: https://www.inegi.org.mx/app/biblioteca/ficha.html?upc=889463674658
+        """
         queryset = self.get_queryset()
         queryset = self.filter_queryset(queryset)
 
@@ -84,6 +92,16 @@ class MunicipioViewSet(ListViewSet):
 
     @action(detail=False, serializer_class=municipio.MunicipioCentroideSerializer)
     def centroide(self, request, **kwargs):
+        """
+        Listado de municipios de la República Mexicana con centroide.
+
+        Regresa la lista de municipios incluyendo el centroide en formato *GeoJSON*.
+        Ejemplo\:
+
+            <host:port>/api/municipio/centroide?casos_gt=100&descripcion_contiene=Oaxaca de Juárez
+
+        Fuente\: https://www.inegi.org.mx/app/biblioteca/ficha.html?upc=889463674658
+        """
         queryset = self.get_queryset()
         queryset = self.filter_queryset(queryset)
 
@@ -99,8 +117,18 @@ class MunicipioViewSet(ListViewSet):
         serializer = self.get_serializer(queryset, many=True)
         return Response(serializer.data)
 
-    @action(detail=True, serializer_class=municipio.MunicipioGeoSerializer)
+    @action(name='geo', detail=True, serializer_class=municipio.MunicipioGeoSerializer)
     def shape(self, request, **kwargs):
+        """
+        Detalle de información por municipio con geometría.
+
+        Regresa el detalle del municipio en formato *GeoJSON*.
+        Ejemplo\:
+
+            <host:port>/api/municipio/geo/230
+
+        Fuente\: https://www.inegi.org.mx/app/biblioteca/ficha.html?upc=889463674658
+        """
         municipio = self.get_object()
         serializador = self.get_serializer(municipio)
         return Response(serializador.data)

@@ -91,6 +91,16 @@ class CasoViewSet(ListViewSet):
 
     @action(detail=False, serializer_class=caso.CasoCoordsSerializer)
     def coords(self, request, **kwargs):
+        """
+        Listado de casos con coordenadas del centroide del municipio.
+
+        Regresa la lista de casos incluyendo en la respuesta las coordenadas
+        del centroide del municipio asociado como campos de punto flotante
+        nombrados como *latitiud* y *longitud*.
+        Ejemplo\:
+
+            <host:port>/api/caso/coords?edad_lt=65&fecha_defuncion_lt=2020-04-05
+        """
         queryset = self.get_queryset()
         queryset = self.filter_queryset(queryset)
 
@@ -104,6 +114,17 @@ class CasoViewSet(ListViewSet):
 
     @action(detail=False, serializer_class=caso.CasoGeoSerializer)
     def centroide(self, request, **kwargs):
+        """
+        Listado de casos con coordenadas del centroide del municipio en GeoJSON.
+
+        Regresa la lista de casos incluyendo en la respuesta las coordenadas
+        del centroide del municipio en formato GeoJSON.
+        Ejemplo\:
+
+            <host:port>/api/caso/centroide?edad_lt=65&fecha_defuncion_lt=2020-04-05
+
+        Fuente\: https://www.inegi.org.mx/app/biblioteca/ficha.html?upc=889463674658
+        """
         queryset = self.get_queryset()
         queryset = self.filter_queryset(queryset)
 

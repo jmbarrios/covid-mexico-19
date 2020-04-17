@@ -39,7 +39,7 @@ class EntidadViewSet(ListViewSet):
         Listado de entidades de la República Mexicana.
 
         Regresa la lista de estados con la clave de asociación usada en el
-        modelo de 'caso' junto con descriptores y el número de casos
+        modelo de *caso* junto con descriptores y el número de casos
         registrados hasta el momento. Ejemplo\:
 
             <host:port>/api/entidad?casos_gt=100&descripcion_contiene=Veracruz
@@ -53,11 +53,9 @@ class EntidadViewSet(ListViewSet):
         """Detalle de información por entidad.
 
         Despliega la información desglosada de cada entidad accediendo por
-        clave. Cada detalle incluye la información que se enlista abajo. El
-        campo de geometría se presenta en EPSG:4326. Ejemplo para la entidad
-        con clave 15:
+        clave. Ejemplo para la entidad con clave 15:
 
-            <host:port>/api/entidad/15/
+            <host:port>/api/entidad/15
 
         Fuente\: https://www.inegi.org.mx/app/biblioteca/ficha.html?upc=889463674658
         """
@@ -65,6 +63,17 @@ class EntidadViewSet(ListViewSet):
 
     @action(detail=False, serializer_class=entidad.EntidadGeoSerializer)
     def geo(self, request, **kwargs):
+        """
+        Listado de entidades de la República Mexicana con geometría.
+
+        Regresa la lista de entidades incluyendo la geometría en formato
+        *GeoJSON*.
+        Ejemplo\:
+
+            <host:port>/api/entidad/geo?casos_gt=100&descripcion_contiene=Veracruz
+
+        Fuente\: https://www.inegi.org.mx/app/biblioteca/ficha.html?upc=889463674658
+        """
         queryset = self.get_queryset()
         queryset = self.filter_queryset(queryset)
 
@@ -82,6 +91,16 @@ class EntidadViewSet(ListViewSet):
 
     @action(detail=False, serializer_class=entidad.EntidadCentroideSerializer)
     def centroide(self, request, **kwargs):
+        """
+        Listado de entidades de la República Mexicana con centroide.
+
+        Regresa la lista de entidades incluyendo el centroide en formato *GeoJSON*.
+        Ejemplo\:
+
+            <host:port>/api/entidad/centroide?casos_gt=100&descripcion_contiene=Veracruz
+
+        Fuente\: https://www.inegi.org.mx/app/biblioteca/ficha.html?upc=889463674658
+        """
         queryset = self.get_queryset()
         queryset = self.filter_queryset(queryset)
 
@@ -97,8 +116,18 @@ class EntidadViewSet(ListViewSet):
         serializer = self.get_serializer(queryset, many=True)
         return Response(serializer.data)
 
-    @action(detail=True, serializer_class=entidad.EntidadGeoSerializer)
+    @action(name='geo', detail=True, serializer_class=entidad.EntidadGeoSerializer)
     def shape(self, request, **kwargs):
+        """
+        Detalle de información por entidad con geometría.
+
+        Regresa el detalle de la entidad en formato *GeoJSON*.
+        Ejemplo\:
+
+            <host:port>/api/entidad/geo/15
+
+        Fuente\: https://www.inegi.org.mx/app/biblioteca/ficha.html?upc=889463674658
+        """
         entidad = self.get_object()
         serializador = self.get_serializer(entidad)
         return Response(serializador.data)
