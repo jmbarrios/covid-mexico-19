@@ -16,7 +16,7 @@ class ListViewSet(
 
 class ListRetrieveViewSet(
         mixins.ListModelMixin,
-        mixinx.RetrieveModelMixin,
+        mixins.RetrieveModelMixin,
         viewsets.GenericViewSet):
     renderer_classes = [
         renderers.JSONRenderer,
