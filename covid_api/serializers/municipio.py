@@ -1,8 +1,8 @@
 from rest_framework import serializers
 from geojson_serializer.serializers import geojson_serializer
-
 from covid_data import models
 from covid_api.serializers import entidad
+
 
 
 class MunicipioSimpleSerializer(serializers.ModelSerializer):
@@ -75,9 +75,9 @@ class MunicipioSerializer(serializers.ModelSerializer):
             'url': {'view_name': 'municipio-detail', 'lookup_field': 'clave'}
         }
 
-
 @geojson_serializer('geometria')
 class MunicipioGeoSerializer(MunicipioSerializer):
+
     class Meta:
         model = models.Municipio
         fields = [

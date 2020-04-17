@@ -13,8 +13,8 @@ class Municipio(ModeloBase):
         'Entidad',
         on_delete=models.CASCADE)
 
-    geometria = MultiPolygonField()
-    geometria_web = MultiPolygonField()
+    geometria = MultiPolygonField(srid=6372)
+    geometria_web = MultiPolygonField(srid=3857)
 
     def __repr__(self):
         return self.descripcion

@@ -1,8 +1,15 @@
 FROM ubuntu:bionic
 ENV DEBIAN_FRONTEND=noninteractive
 ENV PGDATA=/pgdata
+
+RUN locale-gen en_US.UTF-8
+ENV LANG en_US.UTF-8
+ENV LC_ALL en_US.UTF-8
+ENV LANGUAGE en_US.UTF-8
+
+
 RUN apt-get update \
-  && apt-get install -yq wget python3 python3-pip nano postgresql-10 postgresql-server-dev-10 postgis\
+  && apt-get install -yq cron wget python3 python3-pip nano postgresql-10 postgresql-server-dev-10 postgis\
   && apt-get clean \
   && rm -rf /var/lib/apt/lists/*
 
@@ -11,26 +18,10 @@ COPY requirements.txt /code/
 RUN pip3 install -r requirements.txt
 COPY . /code/
 
-
-#RUN chown postgres /var/lib/postgresql/10/main
-#RUN chgrp postgres /var/lib/postgresql/10/main 
-#RUN chmod -R 0700 /var/lib/postgresql/10/
-#RUN su postgres
-#RUN /var/lib/postgresql/10/bin/initdb -D /var/lib/postgresql/10/main/
-#RUN exit
-#RUN service postgresql start
-#RUN su postgres
-#RUN psql -c "CREATE DATABASE covid WITH TEMPLATE template0"
-#RUN psql -c "CREATE USER covid WITH PASSWORD 'covid'"
-#RUN psql -c "GRANT ALL PRIVILEGES ON DATABASE covid TO covid"
-#RUN psql -d covid "CREATE EXTENSION postgis"
-#RUN exit
-
-#WORKDIR /code
-#RUN python3 manage.py migrate
-#RUN pyhohn3 manage.py actualizar_catalogos
-#RUN python3 manage.py actualizar_casos 
-
+COPY cronjob /etc/cron.d/cronjob
+RUN chmod 0644 /etc/cron.d/cronjob
+RUN crontab /etc/cron.d/cronjob
+RUN touch /var/log/cron.log
+   
 
 ENTRYPOINT ["/bin/bash"]
-

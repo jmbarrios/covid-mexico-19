@@ -51,7 +51,7 @@ class Command(BaseCommand):
         elif codigo == 1:
             mensaje = (
                 'No hay datos nuevos que actualizar. Si no los '
-                'has descargado corre de nuevo con la opción '
+                'has descargado corre de nuevo con la opcion '
                 '--descargar.')
             self.stdout.write(self.style.WARNING(mensaje))
         else:
