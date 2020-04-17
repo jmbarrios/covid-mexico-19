@@ -1,5 +1,5 @@
+import json
 from rest_framework import serializers
-from geojson_serializer.serializers import geojson_serializer
 
 from covid_data import models
 
@@ -69,32 +69,20 @@ class EntidadSerializer(serializers.ModelSerializer):
         }
 
 
-@geojson_serializer('geometria_web')
-class EntidadGeoSerializer(EntidadSerializer):
+class EntidadGeoSerializer(serializers.ModelSerializer):
+    type = serializers.CharField(
+        read_only=True,
+        default='Feature')
+    geometry = serializers.SerializerMethodField()
+    properties = EntidadSerializer(source='*')
+
     class Meta:
         model = models.Entidad
         fields = [
-            'url',
-            'clave',
-            'descripcion',
-            'geometria_web',
-            'casos_positivos',
-            'casos_negativos',
-            'casos_sospechosos',
-            'defunciones_confirmadas',
-            'defunciones_sospechosas',
-            'intubados_confirmados',
-            'intubados_sospechosos',
-            'hospitalizados_confirmados',
-            'hospitalizados_sospechosos',
-            'ambulatorios_confirmados',
-            'ambulatorios_sospechosos',
-            'criticos_confirmados',
-            'criticos_sospechosos',
+            'type',
+            'geometry',
+            'properties'
         ]
-        extra_kwargs = {
-            'url': {'view_name': 'entidad-detail', 'lookup_field': 'clave'}
-        }
 
-
-EntidadGeoSerializer.__name__ = 'EntidadGeoSerializer'
+    def get_geometry(self, obj):
+        return json.loads(obj.geometria_web.geojson)
