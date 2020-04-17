@@ -32,8 +32,8 @@ def cargar_entidades(apps, schema_editor):
         geometria_web = geometria.transform(3857, clone=True)
 
         if geometria.geom_type == 'Polygon':
-            geometria = MultiPolygon(geometria)
-            geometria_web = MultiPolygon(geometria_web)
+            geometria = MultiPolygon(geometria, srid=6372)
+            geometria_web = MultiPolygon(geometria_web, srid=3857)
 
         entidad, creado = Entidad.objects.get_or_create(
             clave=clave,
@@ -48,7 +48,7 @@ def cargar_entidades(apps, schema_editor):
 
 class Migration(migrations.Migration):
     dependencies = [
-        ('covid_update', '0001_actualizacion'),
+        ('covid_update', '0001_actualizacion')
     ]
     operations = [
         migrations.RunPython(cargar_entidades)
