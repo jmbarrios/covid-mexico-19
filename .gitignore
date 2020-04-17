@@ -139,3 +139,5 @@ cython_debug/
 
 # Trash
 pgdata/
+
+covid.env
