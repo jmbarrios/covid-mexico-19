@@ -91,37 +91,21 @@ class MunicipioSerializer(MunicipioSimpleSerializer):
             'url': {'view_name': 'municipio-detail', 'lookup_field': 'clave'}
         }
 
-@geojson_serializer('geometria_web')
-class MunicipioGeoSerializer(MunicipioSerializer):
+
+class MunicipioGeoSerializer(serializers.ModelSerializer):
+    type = serializers.CharField(
+        read_only=True,
+        default='Feature')
+    geometry = serializers.SerializerMethodField()
+    properties = MunicipioSerializer(source='*')
 
     class Meta:
-        model = models.Municipio
+        model = models.Entidad
         fields = [
-            'url',
-            'clave',
-            'clave_municipio',
-            'entidad_clave',
-            'entidad_descripcion',
-            'entidad_url',
-            'descripcion',
-            'geometria_web',
-            'casos_positivos',
-            'casos_negativos',
-            'casos_sospechosos',
-            'defunciones_confirmadas',
-            'defunciones_sospechosas',
-            'intubados_confirmados',
-            'intubados_sospechosos',
-            'hospitalizados_confirmados',
-            'hospitalizados_sospechosos',
-            'ambulatorios_confirmados',
-            'ambulatorios_sospechosos',
-            'criticos_confirmados',
-            'criticos_sospechosos',
+            'type',
+            'geometry',
+            'properties'
         ]
-        extra_kwargs = {
-            'url': {'view_name': 'municipio-detail', 'lookup_field': 'clave'}
-        }
 
-
-MunicipioGeoSerializer.__name__ = 'MunicipioGeoSerializer'
+    def get_geometry(self, obj):
+        return json.loads(obj.geometria_web.geojson)
