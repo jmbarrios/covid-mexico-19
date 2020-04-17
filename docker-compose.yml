@@ -5,6 +5,8 @@ services:
     image: kartoza/postgis
     ports:
       - "${POSTGRES_PORT}:5432"
+    env_file:
+      - covid.env
   covid_services:
     build: .
     command: bash iniciar.sh
