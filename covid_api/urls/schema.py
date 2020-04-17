@@ -51,7 +51,7 @@ forma en todos las situaciones\:
 
 1. Cuando el campo se usa para comparar el valor exacto directamente,
 únicamente se usa el nombre del campo con la igualdad. Ejemplo\:
-        <host:port>/api/caso?edad = 40
+        <host:port>/api/caso?edad=40
 2. Cuando se usan los atributos 'clave' o 'descripcion' en comparación
 exacta se indica un guión bajo el acceso al atributo. Ejemplo\:
         <host:port>/api/caso?sexo_descripcion=F
