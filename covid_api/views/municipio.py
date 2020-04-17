@@ -3,20 +3,18 @@ from django.views.decorators.cache import cache_page
 from django.utils.decorators import method_decorator
 from rest_framework.decorators import action
 from rest_framework.response import Response
-from rest_framework import viewsets
 
 from covid_data import models
 from covid_api import filters
-from covid_api.views.base import renderer_classes
+from covid_api.views.base import ListViewSet
 from covid_api.serializers import municipio
 
 
-class MunicipioViewSet(viewsets.ReadOnlyModelViewSet):
+class MunicipioViewSet(ListViewSet):
     queryset = models.Municipio.objects.all()
     filterset_class = filters.MunicipioFilter
     serializer_class = municipio.MunicipioSerializer
     lookup_field = 'clave'
-    renderer_classes = renderer_classes
     ordering = ['-casos_positivos']
     ordering_fields = [
         'casos_positivos',

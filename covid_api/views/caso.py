@@ -5,7 +5,6 @@ from rest_framework.response import Response
 
 from covid_data import models
 from covid_api import filters
-from covid_api.views.base import renderer_classes
 from covid_api.views.base import ListViewSet
 from covid_api.serializers import caso
 
@@ -58,7 +57,6 @@ class CasoViewSet(ListViewSet):
     queryset = models.Caso.objects.all().prefetch_related(*campos_relacionales)
     filterset_class = filters.CasoFilter
     serializer_class = caso.CasoSerializer
-    renderer_classes = renderer_classes
     ordering = ['fecha_ingreso']
     ordering_fields = [
         'fecha_ingreso',

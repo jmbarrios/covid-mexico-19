@@ -3,7 +3,7 @@ from django.utils.decorators import method_decorator
 
 from covid_data import models
 from covid_api.serializers import municipio
-from covid_api.views.catalogos.base import CatalogoVistaPaginada
+from covid_api.views.catalogos.base import CatalogoVista
 
 
 campos = [
@@ -13,7 +13,7 @@ campos = [
     'descripcion']
 
 
-class CatalogoMunicipiosVista(CatalogoVistaPaginada):
+class CatalogoMunicipiosVista(CatalogoVista):
     queryset = models.Municipio.objects.only(*campos).all()
     serializer_class = municipio.MunicipioSimpleSerializer
 
