@@ -1,6 +1,8 @@
 from django.db.models import Count, Q
 from django.views.decorators.cache import cache_page
 from django.utils.decorators import method_decorator
+from rest_framework.decorators import action
+from rest_framework.response import Response
 from rest_framework import viewsets
 
 from covid_data import models
@@ -12,6 +14,7 @@ from covid_api.serializers import municipio
 class MunicipioViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = models.Municipio.objects.all()
     filterset_class = filters.MunicipioFilter
+    serializer_class = municipio.MunicipioGeoSerializer
     lookup_field = 'clave'
     renderer_classes = renderer_classes
     ordering = ['-casos_positivos']
@@ -64,10 +67,11 @@ class MunicipioViewSet(viewsets.ReadOnlyModelViewSet):
         """
         return super().retrieve(*args, **kwargs)
 
-    def get_serializer_class(self, *args, **kwargs):
-        if self.action == 'list':
-            return municipio.MunicipioSerializer
-        return municipio.MunicipioGeoSerializer
+    @action(detail=True, serializer_class=municipio.MunicipioGeoSerializer)
+    def shape(self, request, **kwargs):
+        municipio = self.get_object()
+        serializador = self.get_serializer(municipio)
+        return Response(serializador.data)
 
     def get_queryset(self, *args, **kwargs):
         queryset = super().get_queryset(*args, **kwargs)

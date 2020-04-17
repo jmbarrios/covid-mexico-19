@@ -6,3 +6,4 @@ psycopg2_binary
 pandas
 djangorestframework
 markdown
+django-cors-headers

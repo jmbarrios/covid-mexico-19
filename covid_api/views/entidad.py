@@ -1,6 +1,8 @@
 from django.db.models import Count, Q
 from django.views.decorators.cache import cache_page
 from django.utils.decorators import method_decorator
+from rest_framework.decorators import action
+from rest_framework.response import Response
 from rest_framework import viewsets
 
 from covid_data import models
@@ -12,6 +14,7 @@ from covid_api.serializers import entidad
 class EntidadViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = models.Entidad.objects.all()
     filterset_class = filters.EntidadFilter
+    serializer_class = entidad.EntidadSerializer
     lookup_field = 'clave'
     renderer_classes = renderer_classes
     ordering = ['-casos_positivos']
@@ -62,18 +65,36 @@ class EntidadViewSet(viewsets.ReadOnlyModelViewSet):
         """
         return super().retrieve(*args, **kwargs)
 
-    def get_serializer_class(self, *args, **kwargs):
-        if self.action == 'list':
-            return entidad.EntidadSerializer
-        return entidad.EntidadGeoSerializer
+    @action(detail=False, serializer_class=entidad.EntidadGeoSerializer)
+    def geo(self, request, **kwargs):
+        queryset = self.get_queryset()
+        queryset = self.filter_queryset(queryset)
+
+        page = self.paginate_queryset(queryset)
+        if page is not None:
+            serializer = self.get_serializer(page, many=True)
+            data = {
+                "type": "FeatureCollection",
+                "features": serializer.data
+            }
+            return self.get_paginated_response(data)
+
+        serializer = self.get_serializer(queryset, many=True)
+        return Response(serializer.data)
+
+    @action(detail=True, serializer_class=entidad.EntidadGeoSerializer)
+    def shape(self, request, **kwargs):
+        entidad = self.get_object()
+        serializador = self.get_serializer(entidad)
+        return Response(serializador.data)
 
     def get_queryset(self, *args, **kwargs):
         queryset = super().get_queryset(*args, **kwargs)
 
-        if self.action == 'list':
+        if self.action in ['list', 'retrieve']:
             queryset = queryset.defer('geometria', 'geometria_web')
         else:
-            queryset = queryset.defer('geometria')
+            queryset = queryset.defer('geometria_web')
 
         cuenta_positivos = Count(
             'entidad_residencia',
