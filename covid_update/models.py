@@ -19,6 +19,6 @@ def obtener_directorio_logs():
 
 
 class Actualizacion(models.Model):
-    ultima_actualizacion = models.DateField(auto_now_add=True)
-    archivo = models.FilePathField(path=obtener_directorio_casos)
+    fecha = models.DateField(auto_now_add=True)
+    archivo = models.FilePathField(path=obtener_directorio_casos, unique=True)
     log = models.FilePathField(path=obtener_directorio_logs, null=True)

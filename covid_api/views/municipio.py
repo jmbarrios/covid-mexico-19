@@ -14,7 +14,7 @@ class MunicipioViewSet(viewsets.ReadOnlyModelViewSet):
     filterset_class = filters.MunicipioFilter
     lookup_field = 'clave'
     renderer_classes = renderer_classes
-    ordering = ['casos_positivos']
+    ordering = ['-casos_positivos']
     ordering_fields = [
         'casos_positivos',
         'casos_negativos',
@@ -71,6 +71,11 @@ class MunicipioViewSet(viewsets.ReadOnlyModelViewSet):
 
     def get_queryset(self, *args, **kwargs):
         queryset = super().get_queryset(*args, **kwargs)
+
+        if self.action == 'list':
+            queryset = queryset.defer('geometria', 'geometria_web')
+        else:
+            queryset = queryset.defer('geometria')
 
         cuenta_positivos = Count(
             'caso',

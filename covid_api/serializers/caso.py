@@ -47,8 +47,11 @@ class CasoSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Caso
         fields = [
-            'id',
             'fecha_actualizacion',
+            'fecha_ingreso',
+            'fecha_sintomas',
+            'fecha_defuncion',
+            'edad',
             'origen',
             'sector',
             'entidad_um',
@@ -57,12 +60,8 @@ class CasoSerializer(serializers.ModelSerializer):
             'entidad_residencia',
             'municipio_residencia',
             'tipo_paciente',
-            'fecha_ingreso',
-            'fecha_sintomas',
-            'fecha_defuncion',
             'intubado',
             'neumonia',
-            'edad',
             'nacionalidad',
             'embarazo',
             'habla_lengua_indigena',

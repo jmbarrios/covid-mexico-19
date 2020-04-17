@@ -6,12 +6,12 @@ class MunicipioFilter(django_filters.FilterSet):
     casos_positivos = django_filters.NumberFilter(
         help_text='Número de casos confirmados. Búsqueda exacta.',
         field_name='casos_positivos',
-        label='Casos negativos')
+        label='Casos positivos')
     casos_positivos_gt = django_filters.NumberFilter(
         help_text='Número de casos confirmados. Mayor que.',
         field_name='casos_positivos',
         lookup_expr='gt',
-        label='Casos negativos mayor que')
+        label='Casos positivos mayor que')
     casos_positivos_lt = django_filters.NumberFilter(
         help_text='Número de casos confirmados. Menor que.',
         field_name='casos_positivos',
@@ -21,7 +21,7 @@ class MunicipioFilter(django_filters.FilterSet):
         help_text='Número de casos confirmados. Mayor o igual que.',
         field_name='casos_positivos',
         lookup_expr='gte',
-        label='Casos negativos mayor o igual que')
+        label='Casos positivos mayor o igual que')
     casos_positivos_lte = django_filters.NumberFilter(
         help_text='Número de casos confirmados. Menor o igual que.',
         field_name='casos_positivos',
