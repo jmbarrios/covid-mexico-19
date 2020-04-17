@@ -53,7 +53,7 @@ forma en todos las situaciones\:
 únicamente se usa el nombre del campo con la igualdad. Ejemplo\:
         <host>/api/caso?edad = 40
 2. Cuando se usan los atributos 'clave' o 'descripcion' en comparación
-exacta se indica con doble guión bajo el acceso al atributo. Ejemplo\:
+exacta se indica un guión bajo el acceso al atributo. Ejemplo\:
         <host>/api/caso?sexo_descripcion=F
 3. Cuando se usan los comparadores en combinación con los casos anteriores como
 en los siguientes ejemplos\:
@@ -67,10 +67,11 @@ filtros en cada modelo.
 ### Formato de respuesta
 
 Para especificar el formato de respuesta deseado (*json* o *csv*), en cualquier
-petición de listado se agrega el parámetro *format*. Por omisión, los
-resultados se regresan en formato *json*. Ejemplo:
+petición de listado se agrega la extensión deseada al nombre del modelo.
+Por omisión, los resultados se regresan en formato *json*. Ejemplo de petición,
+en formato CSV:
 
-    <host>/api/casos?format=json
+    <host>/api/casos.csv?edad_gt=60
 
 ### Paginación
 
