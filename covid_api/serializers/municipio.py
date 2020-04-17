@@ -108,3 +108,22 @@ class MunicipioGeoSerializer(serializers.ModelSerializer):
 
     def get_geometry(self, obj):
         return json.loads(obj.geometria.geojson)
+
+
+class MunicipioCentroideSerializer(serializers.ModelSerializer):
+    type = serializers.CharField(
+        read_only=True,
+        default='Feature')
+    geometry = serializers.SerializerMethodField()
+    properties = MunicipioSerializer(source='*')
+
+    class Meta:
+        model = models.Entidad
+        fields = [
+            'type',
+            'geometry',
+            'properties'
+        ]
+
+    def get_geometry(self, obj):
+        return json.loads(obj.centroide.geojson)

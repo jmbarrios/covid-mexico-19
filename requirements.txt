@@ -7,3 +7,4 @@ pandas
 djangorestframework
 markdown
 django-cors-headers
+tqdm

@@ -14,7 +14,7 @@ from covid_api.serializers import municipio
 class MunicipioViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = models.Municipio.objects.all()
     filterset_class = filters.MunicipioFilter
-    serializer_class = municipio.MunicipioGeoSerializer
+    serializer_class = municipio.MunicipioSerializer
     lookup_field = 'clave'
     renderer_classes = renderer_classes
     ordering = ['-casos_positivos']
@@ -67,6 +67,40 @@ class MunicipioViewSet(viewsets.ReadOnlyModelViewSet):
         """
         return super().retrieve(*args, **kwargs)
 
+    @action(detail=False, serializer_class=municipio.MunicipioGeoSerializer)
+    def geo(self, request, **kwargs):
+        queryset = self.get_queryset()
+        queryset = self.filter_queryset(queryset)
+
+        page = self.paginate_queryset(queryset)
+        if page is not None:
+            serializer = self.get_serializer(page, many=True)
+            data = {
+                "type": "FeatureCollection",
+                "features": serializer.data
+            }
+            return self.get_paginated_response(data)
+
+        serializer = self.get_serializer(queryset, many=True)
+        return Response(serializer.data)
+
+    @action(detail=False, serializer_class=municipio.MunicipioCentroideSerializer)
+    def centroide(self, request, **kwargs):
+        queryset = self.get_queryset()
+        queryset = self.filter_queryset(queryset)
+
+        page = self.paginate_queryset(queryset)
+        if page is not None:
+            serializer = self.get_serializer(page, many=True)
+            data = {
+                "type": "FeatureCollection",
+                "features": serializer.data
+            }
+            return self.get_paginated_response(data)
+
+        serializer = self.get_serializer(queryset, many=True)
+        return Response(serializer.data)
+
     @action(detail=True, serializer_class=municipio.MunicipioGeoSerializer)
     def shape(self, request, **kwargs):
         municipio = self.get_object()
@@ -76,10 +110,16 @@ class MunicipioViewSet(viewsets.ReadOnlyModelViewSet):
     def get_queryset(self, *args, **kwargs):
         queryset = super().get_queryset(*args, **kwargs)
 
-        if self.action == 'list':
-            queryset = queryset.defer('geometria', 'geometria_web')
+        if self.action in ['list', 'retrieve']:
+            queryset = queryset.defer(
+                'geometria',
+                'geometria_web',
+                'centroide',
+                'centroide_web')
         else:
-            queryset = queryset.defer('geometria')
+            queryset = queryset.defer(
+                'geometria_web',
+                'centroide_web')
 
         cuenta_positivos = Count(
             'caso',

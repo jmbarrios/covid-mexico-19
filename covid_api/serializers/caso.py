@@ -1,3 +1,4 @@
+import json
 from rest_framework import serializers
 
 from covid_data import models
@@ -47,6 +48,74 @@ class CasoSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Caso
         fields = [
+            'fecha_actualizacion',
+            'fecha_ingreso',
+            'fecha_sintomas',
+            'fecha_defuncion',
+            'edad',
+            'origen',
+            'sector',
+            'entidad_um',
+            'sexo',
+            'entidad_nacimiento',
+            'entidad_residencia',
+            'municipio_residencia',
+            'tipo_paciente',
+            'intubado',
+            'neumonia',
+            'nacionalidad',
+            'embarazo',
+            'habla_lengua_indigena',
+            'diabetes',
+            'epoc',
+            'asma',
+            'inmusupr',
+            'hipertension',
+            'otras_com',
+            'cardiovascular',
+            'obesidad',
+            'renal_cronica',
+            'tabaquismo',
+            'otro_caso',
+            'resultado',
+            'migrante',
+            'pais_nacionalidad',
+            'pais_origen',
+            'uci']
+
+
+class CasoGeoSerializer(serializers.ModelSerializer):
+    type = serializers.CharField(
+        read_only=True,
+        default='Feature')
+    geometry = serializers.SerializerMethodField()
+    properties = CasoSerializer(source='*')
+
+    class Meta:
+        model = models.Entidad
+        fields = [
+            'type',
+            'geometry',
+            'properties'
+        ]
+
+    def get_geometry(self, obj):
+        return json.loads(obj.municipio_residencia.centroide.geojson)
+
+
+class CasoCoordsSerializer(CasoSerializer):
+    latitud = serializers.FloatField(
+        source='municipio_residencia.centroide.y',
+        help_text='Latitud del centroide del municipio de residencia.')
+    longitud = serializers.FloatField(
+        source='municipio_residencia.centroide.x',
+        help_text='Longitud del centroide del municipio de residencia.')
+
+    class Meta:
+        model = models.Caso
+        fields = [
+            'latitud',
+            'longitud',
             'fecha_actualizacion',
             'fecha_ingreso',
             'fecha_sintomas',

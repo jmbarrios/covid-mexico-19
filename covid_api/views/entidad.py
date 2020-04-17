@@ -82,6 +82,23 @@ class EntidadViewSet(viewsets.ReadOnlyModelViewSet):
         serializer = self.get_serializer(queryset, many=True)
         return Response(serializer.data)
 
+    @action(detail=False, serializer_class=entidad.EntidadCentroideSerializer)
+    def centroide(self, request, **kwargs):
+        queryset = self.get_queryset()
+        queryset = self.filter_queryset(queryset)
+
+        page = self.paginate_queryset(queryset)
+        if page is not None:
+            serializer = self.get_serializer(page, many=True)
+            data = {
+                "type": "FeatureCollection",
+                "features": serializer.data
+            }
+            return self.get_paginated_response(data)
+
+        serializer = self.get_serializer(queryset, many=True)
+        return Response(serializer.data)
+
     @action(detail=True, serializer_class=entidad.EntidadGeoSerializer)
     def shape(self, request, **kwargs):
         entidad = self.get_object()
