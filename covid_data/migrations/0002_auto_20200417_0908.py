@@ -14,7 +14,7 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='entidad',
             name='geometria',
-            field=django.contrib.gis.db.models.fields.MultiPolygonField(srid=6372),
+            field=django.contrib.gis.db.models.fields.MultiPolygonField(srid=4326),
         ),
         migrations.AlterField(
             model_name='entidad',
@@ -24,7 +24,7 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='municipio',
             name='geometria',
-            field=django.contrib.gis.db.models.fields.MultiPolygonField(srid=6372),
+            field=django.contrib.gis.db.models.fields.MultiPolygonField(srid=4326),
         ),
         migrations.AlterField(
             model_name='municipio',
