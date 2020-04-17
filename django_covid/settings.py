@@ -39,7 +39,6 @@ INSTALLED_APPS = (
     [
         'covid_data.apps.CovidDataConfig',
         'covid_update.apps.CovidUpdateConfig',
-        'geojson_serializer',
         'django.contrib.gis',
         'django.contrib.admin',
         'django.contrib.auth',
