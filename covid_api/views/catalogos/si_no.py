@@ -19,7 +19,7 @@ class CatalogoSiNoVista(CatalogoVista):
         según el formato de la información liberada. No requiere parámetros.
         Ejemplo:
 
-            <host>/api/catalogos/si_no/
+            <host:port>/api/catalogos/si_no/
 
         """
         return super().list(*args, **kwargs)

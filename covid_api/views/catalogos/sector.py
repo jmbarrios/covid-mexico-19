@@ -18,7 +18,7 @@ class CatalogoSectorVista(CatalogoVista):
         Regresa la lista de valores posibles para *sector*, según el
         formato de la información liberada. No requiere parámetros. Ejemplo:
 
-            <host>/api/catalogos/sector/
+            <host:port>/api/catalogos/sector/
 
         """
         return super().list(*args, **kwargs)

@@ -18,7 +18,7 @@ class CatalogoPaisVista(CatalogoVista):
         Regresa la lista de paises del mundo asociados a la información por
         clave. No requiere parámetros. Ejemplo:
 
-            <host>/api/catalogos/paises/
+            <host:port>/api/catalogos/paises/
 
         """
         return super().list(*args, **kwargs)

@@ -51,15 +51,15 @@ forma en todos las situaciones\:
 
 1. Cuando el campo se usa para comparar el valor exacto directamente,
 únicamente se usa el nombre del campo con la igualdad. Ejemplo\:
-        <host>/api/caso?edad = 40
+        <host:port>/api/caso?edad = 40
 2. Cuando se usan los atributos 'clave' o 'descripcion' en comparación
 exacta se indica un guión bajo el acceso al atributo. Ejemplo\:
-        <host>/api/caso?sexo_descripcion=F
+        <host:port>/api/caso?sexo_descripcion=F
 3. Cuando se usan los comparadores en combinación con los casos anteriores como
 en los siguientes ejemplos\:
-        <host>/api/caso?fecha_ingreso_gt=2020-04-12
-        <host>/api/caso?municipio_residencia_descripcion_contiene=Mazatlán
-        <host>/api/caso?edad_lt=60
+        <host:port>/api/caso?fecha_ingreso_gt=2020-04-12
+        <host:port>/api/caso?municipio_residencia_descripcion_contiene=Mazatlán
+        <host:port>/api/caso?edad_lt=60
 
 En la documentación de cada modelo se especifican los parámetros para producir
 filtros en cada modelo.
@@ -71,7 +71,7 @@ petición de listado se agrega la extensión deseada al nombre del modelo.
 Por omisión, los resultados se regresan en formato *json*. Ejemplo de petición,
 en formato CSV:
 
-    <host>/api/casos.csv?edad_gt=60
+    <host:port>/api/casos.csv?edad_gt=60
 
 ### Paginación
 
@@ -81,7 +81,7 @@ la cual comienza la página en el resultado completo, respectivamente. Por
 ejemplo, para solicitar 100 casos a partir de la posición 10 debería
 de usarse\:
 
-    <host>/api/casos?limit=100&offset=10
+    <host:port>/api/casos?limit=100&offset=10
 
 Estos parámetros se combinan con cualquier filtro.
 """

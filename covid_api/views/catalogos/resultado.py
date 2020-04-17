@@ -18,7 +18,7 @@ class CatalogoResultadoVista(CatalogoVista):
         Regresa la lista de valores posibles para *resultado*, según el
         formato de la información liberada. No requiere parámetros. Ejemplo:
 
-            <host>/api/catalogos/resultado/
+            <host:port>/api/catalogos/resultado/
 
         """
         return super().list(*args, **kwargs)

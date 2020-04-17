@@ -41,7 +41,7 @@ class EntidadViewSet(viewsets.ReadOnlyModelViewSet):
         modelo de 'caso' junto con descriptores y el número de casos
         registrados hasta el momento. Ejemplo\:
 
-            <host>/api/entidad?casos_gt=100&descripcion_contiene=Veracruz
+            <host:port>/api/entidad?casos_gt=100&descripcion_contiene=Veracruz
 
         Fuente\: https://www.inegi.org.mx/app/biblioteca/ficha.html?upc=889463674658
         """
@@ -56,7 +56,7 @@ class EntidadViewSet(viewsets.ReadOnlyModelViewSet):
         campo de geometría se presenta en la proyección WGS 84 /
         Pseudo-Mercator (EPSG:3857). Ejemplo para la entidad con clave 15:
 
-            <host>/api/entidad/15/
+            <host:port>/api/entidad/15/
 
         Fuente\: https://www.inegi.org.mx/app/biblioteca/ficha.html?upc=889463674658
         """

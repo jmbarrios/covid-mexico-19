@@ -18,7 +18,7 @@ class CatalogoTipoPacienteVista(CatalogoVista):
         Regresa la lista de valores posibles para *tipo_paciente*, según el
         formato de la información liberada. No requiere parámetros. Ejemplo:
 
-            <host>/api/catalogos/tipo_paciente/
+            <host:port>/api/catalogos/tipo_paciente/
 
         """
         return super().list(*args, **kwargs)

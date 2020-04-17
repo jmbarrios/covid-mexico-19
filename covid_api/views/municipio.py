@@ -43,7 +43,7 @@ class MunicipioViewSet(viewsets.ReadOnlyModelViewSet):
         modelo de 'caso' junto con descriptores y el número de casos
         registrados hasta el momento. Ejemplo\:
 
-            <host>/api/municipio?casos_gt=100&descripcion_contiene=Oaxaca de Juárez
+            <host:port>/api/municipio?casos_gt=100&descripcion_contiene=Oaxaca de Juárez
 
         Fuente\: https://www.inegi.org.mx/app/biblioteca/ficha.html?upc=889463674658
         """
@@ -58,7 +58,7 @@ class MunicipioViewSet(viewsets.ReadOnlyModelViewSet):
         campo de geometría se presenta en la proyección WGS 84 /
         Pseudo-Mercator (EPSG:3857). Ejemplo para el municipio con clave 230:
 
-            <host>/api/municipio/230/
+            <host:port>/api/municipio/230/
 
         Fuente\: https://www.inegi.org.mx/app/biblioteca/ficha.html?upc=889463674658
         """

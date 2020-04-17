@@ -83,6 +83,6 @@ class CasoViewSet(ListViewSet):
         que se describen en el listado de abajo para producir subconjuntos de
         interés en la respuesta. Ejemplo:
 
-            <host>/api/caso?edad_lt=65&fecha_defuncion_lt=2020-04-05
+            <host:port>/api/caso?edad_lt=65&fecha_defuncion_lt=2020-04-05
         """
         return super().list(*args, **kwargs)

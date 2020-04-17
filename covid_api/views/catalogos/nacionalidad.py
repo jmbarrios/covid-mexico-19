@@ -18,7 +18,7 @@ class CatalogoNacionalidadVista(CatalogoVista):
         Regresa la lista de valores posibles para *nacionalidad*, según el
         formato de la información liberada. No requiere parámetros. Ejemplo:
 
-            <host>/api/catalogos/nacionalidad/
+            <host:port>/api/catalogos/nacionalidad/
 
         """
         return super().list(*args, **kwargs)

@@ -18,7 +18,7 @@ class CatalogoSexoVista(CatalogoVista):
         Regresa la lista de valores posibles para *sexo*, según el formato de
         la información liberada. No requiere parámetros. Ejemplo:
 
-            <host>/api/catalogos/sexo/
+            <host:port>/api/catalogos/sexo/
 
         """
         return super().list(*args, **kwargs)

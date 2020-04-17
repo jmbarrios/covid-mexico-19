@@ -21,7 +21,7 @@ class CatalogoEntidadesVista(CatalogoVista):
         Regresa la lista de valores posibles para *Entidad*, según el
         formato de la información liberada. No requiere parámetros. Ejemplo:
 
-            <host>/api/catalogos/entidades/
+            <host:post>/api/catalogos/entidades/
 
         """
         return super().list(*args, **kwargs)

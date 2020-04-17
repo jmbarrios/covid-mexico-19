@@ -18,7 +18,7 @@ class CatalogoOrigenVista(CatalogoVista):
         Regresa la lista de valores posibles para *origen*, según el
         formato de la información liberada. No requiere parámetros. Ejemplo:
 
-            <host>/api/catalogos/origen/
+            <host:port>/api/catalogos/origen/
 
         """
         return super().list(*args, **kwargs)
