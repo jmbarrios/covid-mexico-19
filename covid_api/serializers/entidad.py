@@ -85,4 +85,4 @@ class EntidadGeoSerializer(serializers.ModelSerializer):
         ]
 
     def get_geometry(self, obj):
-        return json.loads(obj.geometria_web.geojson)
+        return json.loads(obj.geometria.geojson)
