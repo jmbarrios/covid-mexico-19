@@ -3,6 +3,31 @@ from covid_data import models
 
 
 class MunicipioFilter(django_filters.FilterSet):
+    descripcion = django_filters.CharFilter()
+    descripcion_contiene = django_filters.CharFilter(
+        field_name='descripcion',
+        lookup_expr='icontains')
+
+    entidad = django_filters.ModelChoiceFilter(
+        queryset=models.Entidad.objects.all(),
+        help_text=(
+            'Entidad a la que pertenece el Municipio. Búsqueda exacta.'))
+    entidad_clave = django_filters.NumberFilter(
+        field_name='entidad__clave',
+        help_text=(
+            'Entidad a la que pertenece el Municipio. Búsqueda por clave.'))
+    entidad_descripcion = django_filters.CharFilter(
+        field_name='entidad__descripcion',
+        help_text=(
+            'Entidad a la que pertenece el Municipio. '
+            'Búsqueda exacta por descripción.'))
+    entidad_descripcion_contiene = django_filters.CharFilter(
+        field_name='entidad__descripcion',
+        lookup_expr='icontains',
+        help_text=(
+            'Entidad a la que pertenece el Municipio. '
+            'Búsqueda por descripción.'))
+
     casos_positivos = django_filters.NumberFilter(
         help_text='Número de casos confirmados. Búsqueda exacta.',
         field_name='casos_positivos',
@@ -328,6 +353,7 @@ class MunicipioFilter(django_filters.FilterSet):
         lookup_expr='lte',
         label='Criticos sospechosos menor o igual que')
 
+
     class Meta:
         model = models.Municipio
-        fields = ['clave', 'clave_municipio', 'entidad', 'descripcion']
+        fields = ['clave', 'clave_municipio']

@@ -1,7 +1,6 @@
+import json
 from rest_framework import serializers
-from geojson_serializer.serializers import geojson_serializer
 from covid_data import models
-
 
 
 class MunicipioSimpleSerializer(serializers.ModelSerializer):
@@ -108,4 +107,4 @@ class MunicipioGeoSerializer(serializers.ModelSerializer):
         ]
 
     def get_geometry(self, obj):
-        return json.loads(obj.geometria_web.geojson)
+        return json.loads(obj.geometria.geojson)
