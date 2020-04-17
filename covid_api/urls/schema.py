@@ -84,6 +84,31 @@ de usarse\:
     <host:port>/api/casos?limit=100&offset=10
 
 Estos parámetros se combinan con cualquier filtro.
+
+### Puntos de acceso
+
+A través de distintos puntos de acceso, la información se sirve en
+presentaciones que pueden ser útiles bajo contextos diferentes. Los puntos de
+acceso **en la raíz** de cada modelo producen la **presentación por omisión**,
+con campos simples, numéricos y de texto, y sin información geográfica
+adicional. Cada una de las siguientes rutas secundarias produce una respuesta
+alternativa, en caso de existir para el modelo dado:
+
+- **geo**: producen respuestas en formato *GeoJSON* con la geometría de las
+   coincidencias
+- **centroide**: producen respuestas en formato *GeoJSON* con el centroide de la
+   geometría asociada. Únicamente para el modelo 'caso', este campo corresponde
+   al centroide del municipio asociado
+- **coords**: produce respuestas con coordenadas geográficas en campos
+   nombrados **latitud** y **longitud**. Por el momento, este endpoint está
+   disponible únicamente para el modelo *caso*
+
+**Los modelos *entidad*, *municipio* y *caso* son paginados por omisión**, por
+lo que el número de resultados depende del tamaño de página, el cual se
+controla con el parámetro *limit*. Para obtener la totalidad de los resultados
+en una sola petición se asigna el valor de -1 a este parámetro
+
+Por el momento, todos los **campos espaciales se presentan en EPSG:4326**.
 """
 
 schema_view = get_schema_view(
