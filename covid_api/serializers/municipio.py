@@ -2,17 +2,32 @@ from rest_framework import serializers
 from geojson_serializer.serializers import geojson_serializer
 
 from covid_data import models
-from covid_api.serializers import entidad
 
 
 class MunicipioSimpleSerializer(serializers.ModelSerializer):
+    entidad_clave = serializers.SlugRelatedField(
+        read_only=True,
+        source='entidad',
+        slug_field='clave')
+    entidad_descripcion = serializers.SlugRelatedField(
+        read_only=True,
+        source='entidad',
+        slug_field='descripcion')
+    entidad_url = serializers.HyperlinkedRelatedField(
+        read_only=True,
+        source='entidad',
+        view_name='entidad-detail',
+        lookup_field='clave')
+
     class Meta:
         model = models.Municipio
         fields = [
             'url',
             'clave',
             'clave_municipio',
-            'entidad',
+            'entidad_clave',
+            'entidad_descripcion',
+            'entidad_url',
             'descripcion'
         ]
         extra_kwargs = {
@@ -20,8 +35,7 @@ class MunicipioSimpleSerializer(serializers.ModelSerializer):
         }
 
 
-class MunicipioSerializer(serializers.ModelSerializer):
-    entidad = entidad.EntidadSimpleSerializer(read_only=True)
+class MunicipioSerializer(MunicipioSimpleSerializer):
     casos_positivos = serializers.IntegerField(
         help_text='Número de casos confirmados.')
     casos_negativos = serializers.IntegerField(
@@ -55,7 +69,9 @@ class MunicipioSerializer(serializers.ModelSerializer):
             'url',
             'clave',
             'clave_municipio',
-            'entidad',
+            'entidad_clave',
+            'entidad_descripcion',
+            'entidad_url',
             'descripcion',
             'casos_positivos',
             'casos_negativos',
@@ -84,7 +100,9 @@ class MunicipioGeoSerializer(MunicipioSerializer):
             'url',
             'clave',
             'clave_municipio',
-            'entidad',
+            'entidad_clave',
+            'entidad_descripcion',
+            'entidad_url',
             'descripcion',
             'geometria',
             'casos_positivos',
