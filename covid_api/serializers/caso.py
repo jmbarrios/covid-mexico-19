@@ -47,7 +47,6 @@ class CasoSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Caso
         fields = [
-            'id',
             'fecha_actualizacion',
             'origen',
             'sector',
