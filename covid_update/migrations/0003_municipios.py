@@ -37,8 +37,8 @@ def cargar_municipios(apps, schema_editor):
         geometria_web = geometria.transform(3857, clone=True)
 
         if geometria.geom_type == 'Polygon':
-            geometria = MultiPolygon(geometria)
-            geometria_web = MultiPolygon(geometria_web)
+            geometria = MultiPolygon(geometria, srid=6372)
+            geometria_web = MultiPolygon(geometria_web, srid=3857)
 
         municipio, creado = Municipio.objects.get_or_create(
             clave=clave,

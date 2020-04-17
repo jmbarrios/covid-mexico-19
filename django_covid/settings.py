@@ -86,19 +86,11 @@ WSGI_APPLICATION = 'django_covid.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.contrib.gis.db.backends.postgis',
-<<<<<<< Updated upstream
         'NAME': os.environ.get('POSTGRES_DBNAME', 'covid'),
         'USER': os.environ.get('POSTGRES_USER', 'covid'),
         'PASSWORD': os.environ.get('POSTGRES_PASS', 'covid'),
         'HOST': os.environ.get('POSTGRES_HOST', 'localhost'),
         'PORT': '',
-=======
-        'NAME': 'covid',
-        'USER': 'covid',
-	'PASSWORD': 'covid',
-        'HOST': 'localhost',
-        'PORT': '5432',
->>>>>>> Stashed changes
     }
 }
 
