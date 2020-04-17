@@ -36,6 +36,7 @@ def cargar_municipios(apps, schema_editor):
         geometria = GEOSGeometry(geometria.wkt, srid=6372)
         geometria_web = geometria.transform(3857, clone=True)
 
+
         if geometria.geom_type == 'Polygon':
             geometria = MultiPolygon(geometria, srid=6372)
             geometria_web = MultiPolygon(geometria_web, srid=3857)

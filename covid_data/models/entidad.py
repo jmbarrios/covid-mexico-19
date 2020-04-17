@@ -8,7 +8,7 @@ class Entidad(ModeloBase):
     clave = models.IntegerField(unique=True)
     descripcion = models.CharField(max_length=80)
 
-    geometria = MultiPolygonField(srid=6327)
+    geometria = MultiPolygonField(srid=4326)
     geometria_web = MultiPolygonField(srid=3857)
 
     def __repr__(self):

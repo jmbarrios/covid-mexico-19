@@ -20,8 +20,8 @@ class Migration(migrations.Migration):
                 ('agregado_el', models.DateTimeField(auto_now_add=True)),
                 ('clave', models.IntegerField(unique=True)),
                 ('descripcion', models.CharField(max_length=80)),
-                ('geometria', django.contrib.gis.db.models.fields.MultiPolygonField(srid=4326)),
-                ('geometria_web', django.contrib.gis.db.models.fields.MultiPolygonField(srid=4326)),
+                ('geometria', django.contrib.gis.db.models.fields.MultiPolygonField(srid=6372)),
+                ('geometria_web', django.contrib.gis.db.models.fields.MultiPolygonField(srid=3857)),
             ],
             options={
                 'abstract': False,
@@ -133,8 +133,8 @@ class Migration(migrations.Migration):
                 ('clave', models.IntegerField(unique=True)),
                 ('descripcion', models.CharField(max_length=80)),
                 ('clave_municipio', models.IntegerField()),
-                ('geometria', django.contrib.gis.db.models.fields.MultiPolygonField(srid=4326)),
-                ('geometria_web', django.contrib.gis.db.models.fields.MultiPolygonField(srid=4326)),
+                ('geometria', django.contrib.gis.db.models.fields.MultiPolygonField(srid=6372)),
+                ('geometria_web', django.contrib.gis.db.models.fields.MultiPolygonField(srid=3857)),
                 ('entidad', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='covid_data.Entidad')),
             ],
             options={

@@ -69,7 +69,7 @@ class EntidadSerializer(serializers.ModelSerializer):
         }
 
 
-@geojson_serializer('geometria')
+@geojson_serializer('geometria_web')
 class EntidadGeoSerializer(EntidadSerializer):
     class Meta:
         model = models.Entidad
@@ -77,7 +77,7 @@ class EntidadGeoSerializer(EntidadSerializer):
             'url',
             'clave',
             'descripcion',
-            'geometria',
+            'geometria_web',
             'casos_positivos',
             'casos_negativos',
             'casos_sospechosos',

@@ -7,7 +7,7 @@ services:
       dockerfile: Dockerfile
     volumes:
       - .:/code
-      - ../pgdata:/var/lib/postgresql/10/main
+      - ../pgdata:/var/lib/postgresql/11/main
     image: ubuntu:bionic
     ports:
       - "8002:8000"

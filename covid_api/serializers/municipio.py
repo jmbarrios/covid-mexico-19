@@ -91,7 +91,7 @@ class MunicipioSerializer(MunicipioSimpleSerializer):
             'url': {'view_name': 'municipio-detail', 'lookup_field': 'clave'}
         }
 
-@geojson_serializer('geometria')
+@geojson_serializer('geometria_web')
 class MunicipioGeoSerializer(MunicipioSerializer):
 
     class Meta:
@@ -104,7 +104,7 @@ class MunicipioGeoSerializer(MunicipioSerializer):
             'entidad_descripcion',
             'entidad_url',
             'descripcion',
-            'geometria',
+            'geometria_web',
             'casos_positivos',
             'casos_negativos',
             'casos_sospechosos',
