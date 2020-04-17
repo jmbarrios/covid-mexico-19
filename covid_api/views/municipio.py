@@ -58,8 +58,8 @@ class MunicipioViewSet(viewsets.ReadOnlyModelViewSet):
 
         Despliega la información desglosada de cada municipio accediendo por
         clave. Cada detalle incluye la información que se enlista abajo. El
-        campo de geometría se presenta en la proyección WGS 84 /
-        Pseudo-Mercator (EPSG:3857). Ejemplo para el municipio con clave 230:
+        campo de geometría se presenta en EPSG:4326. Ejemplo para el municipio
+        con clave 230:
 
             <host:port>/api/municipio/230/
 
