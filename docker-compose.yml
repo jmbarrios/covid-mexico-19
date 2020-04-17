@@ -1,0 +1,13 @@
+version: '3.1'
+services:
+  covid_services:
+    tty: true
+    build:
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+      - .:/code
+      - ../pgdata:/var/lib/postgresql/10/main
+    image: ubuntu:bionic
+    ports:
+      - "8002:8000"
