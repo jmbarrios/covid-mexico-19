@@ -31,6 +31,8 @@ def cargar_entidades(apps, schema_editor):
         geometria = GEOSGeometry(geometria.wkt, srid=6372)
         geometria_web = geometria.transform(3857, clone=True)
         geometria.transform(4326)
+        centroide = geometria.centroid
+        centroide_web = geometria_web.centroid
 
         if geometria.geom_type == 'Polygon':
             geometria = MultiPolygon(geometria, srid=4326)
@@ -41,7 +43,9 @@ def cargar_entidades(apps, schema_editor):
             descripcion=descripcion,
             defaults=dict(
                 geometria=geometria,
-                geometria_web=geometria_web))
+                geometria_web=geometria_web,
+                centroide=centroide,
+                centroide_web=centroide_web))
 
         if creado:
             print(f'entidad creado {entidad}')

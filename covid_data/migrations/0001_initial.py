@@ -22,6 +22,8 @@ class Migration(migrations.Migration):
                 ('descripcion', models.CharField(max_length=80)),
                 ('geometria', django.contrib.gis.db.models.fields.MultiPolygonField(srid=4326)),
                 ('geometria_web', django.contrib.gis.db.models.fields.MultiPolygonField(srid=3857)),
+                ('centroide', django.contrib.gis.db.models.fields.PointField(srid=4326)),
+                ('centroide_web', django.contrib.gis.db.models.fields.PointField(srid=3857)),
             ],
             options={
                 'abstract': False,
@@ -135,6 +137,8 @@ class Migration(migrations.Migration):
                 ('clave_municipio', models.IntegerField()),
                 ('geometria', django.contrib.gis.db.models.fields.MultiPolygonField(srid=4326)),
                 ('geometria_web', django.contrib.gis.db.models.fields.MultiPolygonField(srid=3857)),
+                ('centroide', django.contrib.gis.db.models.fields.PointField(srid=4326)),
+                ('centroide_web', django.contrib.gis.db.models.fields.PointField(srid=3857)),
                 ('entidad', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='covid_data.Entidad')),
             ],
             options={

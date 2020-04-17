@@ -53,8 +53,8 @@ class EntidadViewSet(viewsets.ReadOnlyModelViewSet):
 
         Despliega la información desglosada de cada entidad accediendo por
         clave. Cada detalle incluye la información que se enlista abajo. El
-        campo de geometría se presenta en la proyección WGS 84 /
-        Pseudo-Mercator (EPSG:3857). Ejemplo para la entidad con clave 15:
+        campo de geometría se presenta en EPSG:4326. Ejemplo para la entidad
+        con clave 15:
 
             <host:port>/api/entidad/15/
 
