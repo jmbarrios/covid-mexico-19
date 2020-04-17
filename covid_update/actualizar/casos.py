@@ -33,13 +33,13 @@ NEUMONIA = 'NEUMONIA'
 EDAD = 'EDAD'
 NACIONALIDAD = 'NACIONALIDAD'
 EMBARAZO = 'EMBARAZO'
-HABLA_LENGUA_INDI = 'HABLA_LENGUA_INDI'
+HABLA_LENGUA_INDIG = 'HABLA_LENGUA_INDIG'
 DIABETES = 'DIABETES'
 EPOC = 'EPOC'
 ASMA = 'ASMA'
 INMUSUPR = 'INMUSUPR'
 HIPERTENSION = 'HIPERTENSION'
-OTRA_CON = 'OTRA_CON'
+OTRA_COM = 'OTRA_COM'
 CARDIOVASCULAR = 'CARDIOVASCULAR'
 OBESIDAD = 'OBESIDAD'
 RENAL_CRONICA = 'RENAL_CRONICA'
@@ -62,13 +62,13 @@ COLUMNAS_SI_NO = {
     INTUBADO: 'intubado',
     NEUMONIA: 'neumonia',
     EMBARAZO: 'embarazo',
-    HABLA_LENGUA_INDI: 'habla_lengua_indigena',
+    HABLA_LENGUA_INDIG: 'habla_lengua_indigena',
     DIABETES: 'diabetes',
     EPOC: 'epoc',
     ASMA: 'asma',
     INMUSUPR: 'inmusupr',
     HIPERTENSION: 'hipertension',
-    OTRA_CON: 'otras_com',
+    OTRA_COM: 'otras_com',
     CARDIOVASCULAR: 'cardiovascular',
     OBESIDAD: 'obesidad',
     RENAL_CRONICA: 'renal_cronica',

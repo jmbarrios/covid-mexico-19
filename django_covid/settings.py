@@ -22,10 +22,12 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # See https://docs.djangoproject.com/en/2.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = '7+tcc5d+_o#)-nd*8n-&m2oo+8zmg7wf5pzr#kb95u4_inb(gb'
+SECRET_KEY = os.environ.get(
+    'DJANGO_SECRET_KEY',
+    '7+tcc5d+_o#)-nd*8n-&m2oo+8zmg7wf5pzr#kb95u4_inb(gb')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.environ.get('DJANGO_DEBUG', True)
 
 ALLOWED_HOSTS = []
 
@@ -85,10 +87,10 @@ WSGI_APPLICATION = 'django_covid.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.contrib.gis.db.backends.postgis',
-        'NAME': 'covid',
-        'USER': 'covid',
-        'PASSWORD': 'covid',
-        'HOST': 'localhost',
+        'NAME': os.environ.get('POSTGRES_DBNAME', 'covid'),
+        'USER': os.environ.get('POSTGRES_USER', 'covid'),
+        'PASSWORD': os.environ.get('POSTGRES_PASS', 'covid'),
+        'HOST': os.environ.get('POSTGRES_HOST', 'localhost'),
         'PORT': '',
     }
 }
