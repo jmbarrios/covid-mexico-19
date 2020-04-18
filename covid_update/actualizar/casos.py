@@ -7,6 +7,7 @@ from tqdm import tqdm
 
 from django.conf import settings
 from django.db import transaction
+from django.db import connection
 
 from covid_data import models
 from covid_update.models import Actualizacion
@@ -108,21 +109,29 @@ def actualizar_casos(log=None):
     if not es_nuevo_archivo(archivo):
         return 1
 
-    borrar_casos_anteriores()
-    tabla = cargar_tabla(archivo)
+    with transaction.atomic():
+        transaction.on_commit(lambda: cargar_nuevos_casos(archivo, log))
 
-    catalogos = cargar_catalogos()
-    municipios = cargar_municipios()
+        borrar_casos_anteriores()
 
-    renglones = len(tabla)
-    nuevos_casos = []
-    for _, renglon in tqdm(tabla.iterrows(), total=renglones):
-        datos = obtener_datos(renglon, catalogos, municipios)
-        nuevos_casos.append(models.Caso(**datos))
-    models.Caso.objects.bulk_create(nuevos_casos)
-
-    guardar_actualizacion(archivo, log)
     return 0
+
+
+def cargar_nuevos_casos(archivo, log):
+    with transaction.atomic():
+        transaction.on_commit(lambda: guardar_actualizacion(archivo, log))
+
+        tabla = cargar_tabla(archivo)
+        catalogos = cargar_catalogos()
+        municipios = cargar_municipios()
+
+        renglones = len(tabla)
+        nuevos_casos = []
+        with transaction.atomic():
+            for _, renglon in tqdm(tabla.iterrows(), total=renglones):
+                datos = obtener_datos(renglon, catalogos, municipios)
+                nuevos_casos.append(models.Caso(**datos))
+            models.Caso.objects.bulk_create(nuevos_casos)
 
 
 def obtener_ultimo_archivo():
@@ -139,7 +148,8 @@ def es_nuevo_archivo(archivo):
 
 
 def borrar_casos_anteriores():
-    models.Caso.objects.raw('DELETE FROM covid_data_caso')
+    with connection.cursor() as cursor:
+        cursor.execute("DELETE FROM covid_data_caso")
 
 
 def cargar_tabla(ruta):

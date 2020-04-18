@@ -117,15 +117,41 @@ class MunicipioViewSet(ListRetrieveViewSet):
         serializer = self.get_serializer(queryset, many=True)
         return Response(serializer.data)
 
-    @action(name='geo', detail=True, serializer_class=municipio.MunicipioGeoSerializer)
-    def shape(self, request, **kwargs):
+    @action(
+        url_name='geo',
+        url_path='geo',
+        name='geo',
+        detail=True,
+        serializer_class=municipio.MunicipioGeoSerializer)
+    def geo_detalle(self, request, **kwargs):
         """
         Detalle de información por municipio con geometría.
 
         Regresa el detalle del municipio en formato *GeoJSON*.
         Ejemplo\:
 
-            <host:port>/api/municipio/geo/230
+            <host:port>/api/municipio/230/geo
+
+        Fuente\: https://www.inegi.org.mx/app/biblioteca/ficha.html?upc=889463674658
+        """
+        municipio = self.get_object()
+        serializador = self.get_serializer(municipio)
+        return Response(serializador.data)
+
+    @action(
+        url_name='centroide',
+        url_path='centroide',
+        name='centroide',
+        detail=True,
+        serializer_class=municipio.MunicipioCentroideSerializer)
+    def centroide_detalle(self, request, **kwargs):
+        """
+        Detalle de información por municipio con centroide.
+
+        Regresa el detalle del municipio en formato *GeoJSON*.
+        Ejemplo\:
+
+            <host:port>/api/municipio/230/geo
 
         Fuente\: https://www.inegi.org.mx/app/biblioteca/ficha.html?upc=889463674658
         """

@@ -116,15 +116,41 @@ class EntidadViewSet(ListRetrieveViewSet):
         serializer = self.get_serializer(queryset, many=True)
         return Response(serializer.data)
 
-    @action(name='geo', detail=True, serializer_class=entidad.EntidadGeoSerializer)
-    def shape(self, request, **kwargs):
+    @action(
+        url_name='geo',
+        url_path='geo',
+        name='geo',
+        detail=True,
+        serializer_class=entidad.EntidadGeoSerializer)
+    def geo_detalle(self, request, **kwargs):
         """
         Detalle de información por entidad con geometría.
 
         Regresa el detalle de la entidad en formato *GeoJSON*.
         Ejemplo\:
 
-            <host:port>/api/entidad/geo/15
+            <host:port>/api/entidad/15/geo
+
+        Fuente\: https://www.inegi.org.mx/app/biblioteca/ficha.html?upc=889463674658
+        """
+        entidad = self.get_object()
+        serializador = self.get_serializer(entidad)
+        return Response(serializador.data)
+
+    @action(
+        url_name='centroide',
+        url_path='centroide',
+        name='centroide',
+        detail=True,
+        serializer_class=entidad.EntidadCentroideSerializer)
+    def centroide_detalle(self, request, **kwargs):
+        """
+        Detalle de información por entidad con centroide.
+
+        Regresa el detalle de la entidad en formato *GeoJSON*.
+        Ejemplo\:
+
+            <host:port>/api/entidad/15/centroide
 
         Fuente\: https://www.inegi.org.mx/app/biblioteca/ficha.html?upc=889463674658
         """
