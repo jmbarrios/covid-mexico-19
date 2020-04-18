@@ -48,6 +48,7 @@ class CasoSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Caso
         fields = [
+            'renglon',
             'fecha_actualizacion',
             'fecha_ingreso',
             'fecha_sintomas',
@@ -114,6 +115,7 @@ class CasoCoordsSerializer(CasoSerializer):
     class Meta:
         model = models.Caso
         fields = [
+            'renglon',
             'latitud',
             'longitud',
             'fecha_actualizacion',

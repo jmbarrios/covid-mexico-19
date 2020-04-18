@@ -79,7 +79,7 @@ class CasoViewSet(ListViewSet):
     @method_decorator(cache_page(60*60*2))
     def list(self, *args, **kwargs):
         """
-        Listado de casos registrados con descriptores.
+        Listado de casos registrados.
 
         El conjunto de datos puede ser filtrado de acuerdo a los parámetros
         que se describen en el listado de abajo para producir subconjuntos de
@@ -117,8 +117,8 @@ class CasoViewSet(ListViewSet):
         """
         Listado de casos con coordenadas del centroide del municipio en GeoJSON.
 
-        Regresa la lista de casos incluyendo en la respuesta las coordenadas
-        del centroide del municipio en formato GeoJSON.
+        Regresa una colección de objetos en formato GeoJSON con los centroides
+        de los municipios junto con los atributos del caso como propiedades.
         Ejemplo\:
 
             <host:port>/api/caso/centroide?edad_lt=65&fecha_defuncion_lt=2020-04-05

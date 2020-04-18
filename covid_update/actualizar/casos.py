@@ -93,8 +93,7 @@ COLUMNAS_MODELOS = {
 }
 
 
-@transaction.atomic
-def actualizar_casos(log=None):
+def actualizar_casos(log=None, forzar=False):
     if log is None:
         logging.basicConfig(level=logging.INFO, format=FORMATO)
     else:
@@ -105,33 +104,39 @@ def actualizar_casos(log=None):
             format=FORMATO)
 
     archivo = obtener_ultimo_archivo()
+    es_nuevo = es_nuevo_archivo(archivo)
 
-    if not es_nuevo_archivo(archivo):
+    if not es_nuevo and not forzar:
         return 1
 
     with transaction.atomic():
-        transaction.on_commit(lambda: cargar_nuevos_casos(archivo, log))
+        if not es_nuevo:
+            with transaction.atomic():
+                actualizacion_previa = Actualizacion.objects.get(archivo=archivo)
+                actualizacion_previa.delete()
 
-        borrar_casos_anteriores()
+        with transaction.atomic():
+            borrar_casos_anteriores()
+
+        with transaction.atomic():
+            tabla = cargar_tabla(archivo)
+            catalogos = cargar_catalogos()
+            municipios = cargar_municipios()
+
+            renglones = len(tabla)
+            nuevos_casos = []
+            with transaction.atomic():
+                for num_renglon, renglon in tqdm(tabla.iterrows(), total=renglones):
+                    datos = obtener_datos(renglon, catalogos, municipios)
+                    nuevos_casos.append(models.Caso(
+                        renglon=num_renglon,
+                        **datos))
+                models.Caso.objects.bulk_create(nuevos_casos)
+
+        with transaction.atomic():
+            guardar_actualizacion(archivo, log)
 
     return 0
-
-
-def cargar_nuevos_casos(archivo, log):
-    with transaction.atomic():
-        transaction.on_commit(lambda: guardar_actualizacion(archivo, log))
-
-        tabla = cargar_tabla(archivo)
-        catalogos = cargar_catalogos()
-        municipios = cargar_municipios()
-
-        renglones = len(tabla)
-        nuevos_casos = []
-        with transaction.atomic():
-            for _, renglon in tqdm(tabla.iterrows(), total=renglones):
-                datos = obtener_datos(renglon, catalogos, municipios)
-                nuevos_casos.append(models.Caso(**datos))
-            models.Caso.objects.bulk_create(nuevos_casos)
 
 
 def obtener_ultimo_archivo():

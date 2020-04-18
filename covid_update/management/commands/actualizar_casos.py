@@ -21,8 +21,11 @@ class Command(BaseCommand):
         parser.add_argument(
             '--descargar',
             action='store_true',
-            help='Descargar los datos',
-        )
+            help='Descargar los datos')
+        parser.add_argument(
+            '--forzar',
+            action='store_true',
+            help='Ignorar actualizaciones recientes')
 
     def handle(self, *args, **options):
         if options['descargar']:
@@ -43,7 +46,9 @@ class Command(BaseCommand):
 
         if options['verbose']:
             log = None
-        codigo = actualizar_casos(log=log)
+
+        forzar = options.get('forzar', False)
+        codigo = actualizar_casos(log=log, forzar=forzar)
 
         if codigo == 0:
             mensaje = 'Datos actualizados correctamente'
