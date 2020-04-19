@@ -7,6 +7,8 @@ services:
       - "9132:5432"
     env_file:
       - .covid.prod.env
+    volumes:
+      - ./pgdata/:/var/lib/postgresql/data
   covid_services:
     build:
       context: .
@@ -19,6 +21,6 @@ services:
     environment:
       - POSTGRES_HOST=db
     env_file:
-      - .covid.env
+      - .covid.prod.env
     depends_on:
       - db

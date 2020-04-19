@@ -8,7 +8,7 @@ services:
     env_file:
       - .covid.env
     volumes:
-      - ./pgdata/:/var/lib/postgresql/data/
+      - ./pgdata/:/var/lib/postgresql/data
   covid_services:
     build:
       context: .
