@@ -29,6 +29,8 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         if options['descargar']:
+            mensaje = 'Descargado datos'
+            self.stdout.write(self.style.NOTICE(mensaje))
             descargar_datos()
 
         log = options.get('log', None)
@@ -48,6 +50,8 @@ class Command(BaseCommand):
             log = None
 
         forzar = options.get('forzar', False)
+        mensaje = 'Actualizando casos'
+        self.stdout.write(self.style.NOTICE(mensaje))
         codigo = actualizar_casos(log=log, forzar=forzar)
 
         if codigo == 0:

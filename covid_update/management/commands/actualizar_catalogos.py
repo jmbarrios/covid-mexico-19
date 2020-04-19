@@ -21,8 +21,18 @@ class Command(BaseCommand):
         )
 
     def handle(self, *args, **opciones):
-        if not opciones['descargar']:
+        if opciones['descargar']:
+            mensaje = 'Descargando catalogos'
+            self.stdout.write(self.style.NOTICE(mensaje))
             descargar_catalogos(forzar=opciones['forzar'])
 
-        procesar_catalogos()
+            mensaje = 'Procesando catalogos'
+            self.stdout.write(self.style.NOTICE(mensaje))
+            procesar_catalogos()
+
+        mensaje = 'Actualizando catalogos'
+        self.stdout.write(self.style.NOTICE(mensaje))
         actualizar_catalogos()
+
+        mensaje = 'Catalogos actualizados exitosamente'
+        self.stdout.write(self.style.SUCCESS(mensaje))
