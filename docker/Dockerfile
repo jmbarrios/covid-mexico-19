@@ -15,11 +15,14 @@ COPY requirements.txt /code/
 RUN pip install -r requirements.txt
 RUN pip install gunicorn
 
-COPY . /code/
-
 COPY docker/cronjob /etc/cron.d/cronjob
 RUN chmod 0644 /etc/cron.d/cronjob
 RUN crontab /etc/cron.d/cronjob
 RUN touch /var/log/cron.log
+
+COPY docker/inicia.sh /code/docker/iniciar.sh
+RUN chmod +x /code/docker/iniciar.sh
+
+COPY . /code/
 
 ENTRYPOINT ["/code/docker/iniciar.sh"]
