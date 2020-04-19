@@ -17,6 +17,7 @@ class ConteoView(ListViewSet):
         .only(*only, 'resultado__clave'))
     filterset_class = filters.CasoConteoFilter
     serializer_class = CasoConteoSerializer
+    ordering_fields = ['conteo']
 
     def list(self, request, *args, **kwargs):
         columnas = self.request.GET.getlist('columna')

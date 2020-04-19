@@ -11,9 +11,7 @@ services:
     build:
       context: .
       dockerfile: docker/Dockerfile
-    command: gunicorn django_covid.wsgi:application -w 4 --bind 0.0.0.0:8000
-    volumes:
-      - .:/code
+    command: bash docker/iniciar.sh
     ports:
       - "8002:8000"
     environment:
