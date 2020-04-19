@@ -9,6 +9,7 @@ RUN apt-get update \
   && rm -rf /var/lib/apt/lists/*
 
 RUN mkdir /code
+RUN mkdir /code/staticfiles
 WORKDIR /code
 
 COPY requirements.txt /code/
