@@ -20,7 +20,7 @@ RUN chmod 0644 /etc/cron.d/cronjob
 RUN crontab /etc/cron.d/cronjob
 RUN touch /var/log/cron.log
 
-COPY docker/inicia.sh /code/docker/iniciar.sh
+COPY docker/iniciar.sh /code/docker/iniciar.sh
 RUN chmod +x /code/docker/iniciar.sh
 
 COPY . /code/
