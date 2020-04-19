@@ -6,14 +6,12 @@ services:
     ports:
       - "9132:5432"
     env_file:
-      - .covid.env
-    volumes:
-      - ./pgdata/:/var/lib/postgresql/data/
+      - .covid.prod.env
   covid_services:
     build:
       context: .
       dockerfile: docker/Dockerfile
-    command: python manage.py runserver 0.0.0.0:8000
+    command: gunicorn django_covid.wsgi:application -w 4 --bind 0.0.0.0:8000
     volumes:
       - .:/code
     ports:

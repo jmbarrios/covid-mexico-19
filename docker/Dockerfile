@@ -21,3 +21,5 @@ COPY docker/cronjob /etc/cron.d/cronjob
 RUN chmod 0644 /etc/cron.d/cronjob
 RUN crontab /etc/cron.d/cronjob
 RUN touch /var/log/cron.log
+
+ENTRYPOINT ["/code/iniciar.sh"]
