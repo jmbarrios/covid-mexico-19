@@ -3,7 +3,8 @@ from django.utils.decorators import method_decorator
 
 from covid_data import models
 from covid_api.serializers import municipio
-from covid_api.views.catalogos.base import CatalogoVistaPaginada
+from covid_api.filters.municipio import MunicipioSimpleFilter
+from covid_api.views.base import ListViewSet
 
 
 campos = [
@@ -13,9 +14,10 @@ campos = [
     'descripcion']
 
 
-class CatalogoMunicipiosVista(CatalogoVistaPaginada):
+class CatalogoMunicipiosVista(ListViewSet):
     queryset = models.Municipio.objects.only(*campos).all()
     serializer_class = municipio.MunicipioSimpleSerializer
+    filterset_class = MunicipioSimpleFilter
 
     @method_decorator(cache_page(60*60*2))
     def list(self, *args, **kwargs):

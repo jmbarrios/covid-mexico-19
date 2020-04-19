@@ -3,10 +3,11 @@ from rest_framework import routers
 from covid_api import views
 
 
-router = routers.DefaultRouter()
+router = routers.DefaultRouter(trailing_slash=False)
 router.register('entidades', views.EntidadViewSet)
 router.register('municipios', views.MunicipioViewSet)
 router.register('casos', views.CasoViewSet)
+router.register('conteos', views.ConteoView)
 router.register(
     'catalogos/entidades',
     views.CatalogoEntidadesVista,

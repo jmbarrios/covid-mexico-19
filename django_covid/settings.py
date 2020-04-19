@@ -39,7 +39,8 @@ INSTALLED_APPS = (
     [
         'covid_data.apps.CovidDataConfig',
         'covid_update.apps.CovidUpdateConfig',
-        'geojson_serializer',
+        'covid_mapa.apps.CovidMapaConfig',
+        'corsheaders',
         'django.contrib.gis',
         'django.contrib.admin',
         'django.contrib.auth',
@@ -53,6 +54,7 @@ INSTALLED_APPS = (
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -89,9 +91,8 @@ DATABASES = {
         'ENGINE': 'django.contrib.gis.db.backends.postgis',
         'NAME': os.environ.get('POSTGRES_DBNAME', 'covid'),
         'USER': os.environ.get('POSTGRES_USER', 'covid'),
-        'PASSWORD': os.environ.get('POSTGRES_PASS', 'covid'),
+        'PASSWORD': os.environ.get('POSTGRES_PASSWORD', 'covid'),
         'HOST': os.environ.get('POSTGRES_HOST', 'localhost'),
-        'PORT': os.environ.get('POSTGRES_PORT', '5432'),
     }
 }
 
@@ -114,6 +115,7 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+CORS_ORIGIN_ALLOW_ALL = True
 
 # Internationalization
 # https://docs.djangoproject.com/en/2.1/topics/i18n/

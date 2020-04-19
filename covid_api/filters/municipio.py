@@ -2,10 +2,17 @@ import django_filters
 from covid_data import models
 
 
-class MunicipioFilter(django_filters.FilterSet):
-    descripcion = django_filters.CharFilter()
+class MunicipioSimpleFilter(django_filters.FilterSet):
+    clave = django_filters.NumberFilter(
+        help_text='Búsqueda exacta por clave.')
+    clave_municipio = django_filters.NumberFilter(
+        help_text='Búsqueda exacta por clave de municipio (dentro de la entidad.')
+
+    descripcion = django_filters.CharFilter(
+        help_text='Búsqueda exacta por descripción).')
     descripcion_contiene = django_filters.CharFilter(
         field_name='descripcion',
+        help_text='Búsqueda exacta por descripción.',
         lookup_expr='icontains')
 
     entidad = django_filters.ModelChoiceFilter(
@@ -28,6 +35,12 @@ class MunicipioFilter(django_filters.FilterSet):
             'Entidad a la que pertenece el Municipio. '
             'Búsqueda por descripción.'))
 
+    class Meta:
+        model = models.Municipio
+        fields = []
+
+
+class MunicipioFilter(MunicipioSimpleFilter):
     casos_positivos = django_filters.NumberFilter(
         help_text='Número de casos confirmados. Búsqueda exacta.',
         field_name='casos_positivos',
@@ -356,4 +369,4 @@ class MunicipioFilter(django_filters.FilterSet):
 
     class Meta:
         model = models.Municipio
-        fields = ['clave', 'clave_municipio']
+        fields = []

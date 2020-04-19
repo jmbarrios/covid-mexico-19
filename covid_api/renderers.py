@@ -20,6 +20,9 @@ class CSVRenderer(renderers.BaseRenderer):
         if data is None:
             return ''
 
+        if isinstance(data, dict) and 'results' in data:
+            data = data['results']
+
         if not isinstance(data, list):
             data = [data]
 
@@ -32,11 +35,3 @@ class CSVRenderer(renderers.BaseRenderer):
             encoding=self.encoding)
 
         return csv_buffer.getvalue()
-
-
-class PaginatedCSVRenderer(CSVRenderer):
-    def render(self, data, media_type=None, renderer_context=None):
-        return super().render(
-            data['results'],
-            media_type=media_type,
-            renderer_context=renderer_context)

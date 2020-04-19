@@ -1,19 +1,20 @@
 from django.db.models import Count, Q
 from django.views.decorators.cache import cache_page
 from django.utils.decorators import method_decorator
-from rest_framework import viewsets
+from rest_framework.decorators import action
+from rest_framework.response import Response
 
 from covid_data import models
 from covid_api import filters
-from covid_api.views.base import renderer_classes
+from covid_api.views.base import ListRetrieveViewSet
 from covid_api.serializers import municipio
 
 
-class MunicipioViewSet(viewsets.ReadOnlyModelViewSet):
+class MunicipioViewSet(ListRetrieveViewSet):
     queryset = models.Municipio.objects.all()
     filterset_class = filters.MunicipioFilter
+    serializer_class = municipio.MunicipioSerializer
     lookup_field = 'clave'
-    renderer_classes = renderer_classes
     ordering = ['-casos_positivos']
     ordering_fields = [
         'casos_positivos',
@@ -40,7 +41,7 @@ class MunicipioViewSet(viewsets.ReadOnlyModelViewSet):
         Listado de municipios de la República Mexicana.
 
         Regresa la lista de municipios con la clave de asociación usada en el
-        modelo de 'caso' junto con descriptores y el número de casos
+        modelo de *caso* junto con descriptores y el número de casos
         registrados hasta el momento. Ejemplo\:
 
             <host:port>/api/municipio?casos_gt=100&descripcion_contiene=Oaxaca de Juárez
@@ -54,28 +55,123 @@ class MunicipioViewSet(viewsets.ReadOnlyModelViewSet):
         """Detalle de información por municipio.
 
         Despliega la información desglosada de cada municipio accediendo por
-        clave. Cada detalle incluye la información que se enlista abajo. El
-        campo de geometría se presenta en la proyección WGS 84 /
-        Pseudo-Mercator (EPSG:3857). Ejemplo para el municipio con clave 230:
+        clave. Ejemplo para el municipio con clave 230:
 
-            <host:port>/api/municipio/230/
+            <host:port>/api/municipio/230
 
         Fuente\: https://www.inegi.org.mx/app/biblioteca/ficha.html?upc=889463674658
         """
         return super().retrieve(*args, **kwargs)
 
-    def get_serializer_class(self, *args, **kwargs):
-        if self.action == 'list':
-            return municipio.MunicipioSerializer
-        return municipio.MunicipioGeoSerializer
+    @action(detail=False, serializer_class=municipio.MunicipioGeoSerializer)
+    def geo(self, request, **kwargs):
+        """
+        Listado de municipios de la República Mexicana con geometría.
+
+        Regresa la lista de municipios incluyendo la geometría en formato *GeoJSON*.
+        Ejemplo\:
+
+            <host:port>/api/municipio/geo?casos_gt=100&descripcion_contiene=Oaxaca de Juárez
+
+        Fuente\: https://www.inegi.org.mx/app/biblioteca/ficha.html?upc=889463674658
+        """
+        queryset = self.get_queryset()
+        queryset = self.filter_queryset(queryset)
+
+        page = self.paginate_queryset(queryset)
+        if page is not None:
+            serializer = self.get_serializer(page, many=True)
+            data = {
+                "type": "FeatureCollection",
+                "features": serializer.data
+            }
+            return self.get_paginated_response(data)
+
+        serializer = self.get_serializer(queryset, many=True)
+        return Response(serializer.data)
+
+    @action(detail=False, serializer_class=municipio.MunicipioCentroideSerializer)
+    def centroide(self, request, **kwargs):
+        """
+        Listado de municipios de la República Mexicana con centroide.
+
+        Regresa la lista de municipios incluyendo el centroide en formato *GeoJSON*.
+        Ejemplo\:
+
+            <host:port>/api/municipio/centroide?casos_gt=100&descripcion_contiene=Oaxaca de Juárez
+
+        Fuente\: https://www.inegi.org.mx/app/biblioteca/ficha.html?upc=889463674658
+        """
+        queryset = self.get_queryset()
+        queryset = self.filter_queryset(queryset)
+
+        page = self.paginate_queryset(queryset)
+        if page is not None:
+            serializer = self.get_serializer(page, many=True)
+            data = {
+                "type": "FeatureCollection",
+                "features": serializer.data
+            }
+            return self.get_paginated_response(data)
+
+        serializer = self.get_serializer(queryset, many=True)
+        return Response(serializer.data)
+
+    @action(
+        url_name='geo',
+        url_path='geo',
+        name='geo',
+        detail=True,
+        serializer_class=municipio.MunicipioGeoSerializer)
+    def geo_detalle(self, request, **kwargs):
+        """
+        Detalle de información por municipio con geometría.
+
+        Regresa el detalle del municipio en formato *GeoJSON*.
+        Ejemplo\:
+
+            <host:port>/api/municipio/230/geo
+
+        Fuente\: https://www.inegi.org.mx/app/biblioteca/ficha.html?upc=889463674658
+        """
+        municipio = self.get_object()
+        serializador = self.get_serializer(municipio)
+        return Response(serializador.data)
+
+    @action(
+        url_name='centroide',
+        url_path='centroide',
+        name='centroide',
+        detail=True,
+        serializer_class=municipio.MunicipioCentroideSerializer)
+    def centroide_detalle(self, request, **kwargs):
+        """
+        Detalle de información por municipio con centroide.
+
+        Regresa el detalle del municipio en formato *GeoJSON*.
+        Ejemplo\:
+
+            <host:port>/api/municipio/230/geo
+
+        Fuente\: https://www.inegi.org.mx/app/biblioteca/ficha.html?upc=889463674658
+        """
+        municipio = self.get_object()
+        serializador = self.get_serializer(municipio)
+        return Response(serializador.data)
 
     def get_queryset(self, *args, **kwargs):
         queryset = super().get_queryset(*args, **kwargs)
 
-        if self.action == 'list':
-            queryset = queryset.defer('geometria', 'geometria_web')
+        if self.action in ['list', 'retrieve']:
+            queryset = queryset.defer(
+                'geometria',
+                'geometria_web',
+                'centroide',
+                'centroide_web')
         else:
-            queryset = queryset.defer('geometria')
+            queryset = queryset.defer(
+                'geometria_web',
+                'centroide_web')
 
         cuenta_positivos = Count(
             'caso',

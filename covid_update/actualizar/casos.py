@@ -7,6 +7,7 @@ from tqdm import tqdm
 
 from django.conf import settings
 from django.db import transaction
+from django.db import connection
 
 from covid_data import models
 from covid_update.models import Actualizacion
@@ -92,8 +93,7 @@ COLUMNAS_MODELOS = {
 }
 
 
-@transaction.atomic
-def actualizar_casos(log=None):
+def actualizar_casos(log=None, forzar=False):
     if log is None:
         logging.basicConfig(level=logging.INFO, format=FORMATO)
     else:
@@ -104,24 +104,38 @@ def actualizar_casos(log=None):
             format=FORMATO)
 
     archivo = obtener_ultimo_archivo()
+    es_nuevo = es_nuevo_archivo(archivo)
 
-    if not es_nuevo_archivo(archivo):
+    if not es_nuevo and not forzar:
         return 1
 
-    borrar_casos_anteriores()
-    tabla = cargar_tabla(archivo)
+    with transaction.atomic():
+        if not es_nuevo:
+            with transaction.atomic():
+                actualizacion_previa = Actualizacion.objects.get(archivo=archivo)
+                actualizacion_previa.delete()
 
-    catalogos = cargar_catalogos()
-    municipios = cargar_municipios()
+        with transaction.atomic():
+            borrar_casos_anteriores()
 
-    renglones = len(tabla)
-    nuevos_casos = []
-    for _, renglon in tqdm(tabla.iterrows(), total=renglones):
-        datos = obtener_datos(renglon, catalogos, municipios)
-        nuevos_casos.append(models.Caso(**datos))
-    models.Caso.objects.bulk_create(nuevos_casos)
+        with transaction.atomic():
+            tabla = cargar_tabla(archivo)
+            catalogos = cargar_catalogos()
+            municipios = cargar_municipios()
 
-    guardar_actualizacion(archivo, log)
+            renglones = len(tabla)
+            nuevos_casos = []
+            with transaction.atomic():
+                for num_renglon, renglon in tqdm(tabla.iterrows(), total=renglones):
+                    datos = obtener_datos(renglon, catalogos, municipios)
+                    nuevos_casos.append(models.Caso(
+                        renglon=num_renglon,
+                        **datos))
+                models.Caso.objects.bulk_create(nuevos_casos)
+
+        with transaction.atomic():
+            guardar_actualizacion(archivo, log)
+
     return 0
 
 
@@ -139,7 +153,8 @@ def es_nuevo_archivo(archivo):
 
 
 def borrar_casos_anteriores():
-    models.Caso.objects.raw('DELETE FROM covid_data_caso')
+    with connection.cursor() as cursor:
+        cursor.execute("DELETE FROM covid_data_caso")
 
 
 def cargar_tabla(ruta):

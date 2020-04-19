@@ -1,19 +1,20 @@
 from django.db.models import Count, Q
 from django.views.decorators.cache import cache_page
 from django.utils.decorators import method_decorator
-from rest_framework import viewsets
+from rest_framework.decorators import action
+from rest_framework.response import Response
 
 from covid_data import models
 from covid_api import filters
-from covid_api.views.base import renderer_classes
+from covid_api.views.base import ListRetrieveViewSet
 from covid_api.serializers import entidad
 
 
-class EntidadViewSet(viewsets.ReadOnlyModelViewSet):
+class EntidadViewSet(ListRetrieveViewSet):
     queryset = models.Entidad.objects.all()
     filterset_class = filters.EntidadFilter
+    serializer_class = entidad.EntidadSerializer
     lookup_field = 'clave'
-    renderer_classes = renderer_classes
     ordering = ['-casos_positivos']
     ordering_fields = [
         'casos_positivos',
@@ -38,7 +39,7 @@ class EntidadViewSet(viewsets.ReadOnlyModelViewSet):
         Listado de entidades de la República Mexicana.
 
         Regresa la lista de estados con la clave de asociación usada en el
-        modelo de 'caso' junto con descriptores y el número de casos
+        modelo de *caso* junto con descriptores y el número de casos
         registrados hasta el momento. Ejemplo\:
 
             <host:port>/api/entidad?casos_gt=100&descripcion_contiene=Veracruz
@@ -52,28 +53,118 @@ class EntidadViewSet(viewsets.ReadOnlyModelViewSet):
         """Detalle de información por entidad.
 
         Despliega la información desglosada de cada entidad accediendo por
-        clave. Cada detalle incluye la información que se enlista abajo. El
-        campo de geometría se presenta en la proyección WGS 84 /
-        Pseudo-Mercator (EPSG:3857). Ejemplo para la entidad con clave 15:
+        clave. Ejemplo para la entidad con clave 15:
 
-            <host:port>/api/entidad/15/
+            <host:port>/api/entidad/15
 
         Fuente\: https://www.inegi.org.mx/app/biblioteca/ficha.html?upc=889463674658
         """
         return super().retrieve(*args, **kwargs)
 
-    def get_serializer_class(self, *args, **kwargs):
-        if self.action == 'list':
-            return entidad.EntidadSerializer
-        return entidad.EntidadGeoSerializer
+    @action(detail=False, serializer_class=entidad.EntidadGeoSerializer)
+    def geo(self, request, **kwargs):
+        """
+        Listado de entidades de la República Mexicana con geometría.
+
+        Regresa la lista de entidades incluyendo la geometría en formato
+        *GeoJSON*.
+        Ejemplo\:
+
+            <host:port>/api/entidad/geo?casos_gt=100&descripcion_contiene=Veracruz
+
+        Fuente\: https://www.inegi.org.mx/app/biblioteca/ficha.html?upc=889463674658
+        """
+        queryset = self.get_queryset()
+        queryset = self.filter_queryset(queryset)
+
+        page = self.paginate_queryset(queryset)
+        if page is not None:
+            serializer = self.get_serializer(page, many=True)
+            data = {
+                "type": "FeatureCollection",
+                "features": serializer.data
+            }
+            return self.get_paginated_response(data)
+
+        serializer = self.get_serializer(queryset, many=True)
+        return Response(serializer.data)
+
+    @action(detail=False, serializer_class=entidad.EntidadCentroideSerializer)
+    def centroide(self, request, **kwargs):
+        """
+        Listado de entidades de la República Mexicana con centroide.
+
+        Regresa la lista de entidades incluyendo el centroide en formato *GeoJSON*.
+        Ejemplo\:
+
+            <host:port>/api/entidad/centroide?casos_gt=100&descripcion_contiene=Veracruz
+
+        Fuente\: https://www.inegi.org.mx/app/biblioteca/ficha.html?upc=889463674658
+        """
+        queryset = self.get_queryset()
+        queryset = self.filter_queryset(queryset)
+
+        page = self.paginate_queryset(queryset)
+        if page is not None:
+            serializer = self.get_serializer(page, many=True)
+            data = {
+                "type": "FeatureCollection",
+                "features": serializer.data
+            }
+            return self.get_paginated_response(data)
+
+        serializer = self.get_serializer(queryset, many=True)
+        return Response(serializer.data)
+
+    @action(
+        url_name='geo',
+        url_path='geo',
+        name='geo',
+        detail=True,
+        serializer_class=entidad.EntidadGeoSerializer)
+    def geo_detalle(self, request, **kwargs):
+        """
+        Detalle de información por entidad con geometría.
+
+        Regresa el detalle de la entidad en formato *GeoJSON*.
+        Ejemplo\:
+
+            <host:port>/api/entidad/15/geo
+
+        Fuente\: https://www.inegi.org.mx/app/biblioteca/ficha.html?upc=889463674658
+        """
+        entidad = self.get_object()
+        serializador = self.get_serializer(entidad)
+        return Response(serializador.data)
+
+    @action(
+        url_name='centroide',
+        url_path='centroide',
+        name='centroide',
+        detail=True,
+        serializer_class=entidad.EntidadCentroideSerializer)
+    def centroide_detalle(self, request, **kwargs):
+        """
+        Detalle de información por entidad con centroide.
+
+        Regresa el detalle de la entidad en formato *GeoJSON*.
+        Ejemplo\:
+
+            <host:port>/api/entidad/15/centroide
+
+        Fuente\: https://www.inegi.org.mx/app/biblioteca/ficha.html?upc=889463674658
+        """
+        entidad = self.get_object()
+        serializador = self.get_serializer(entidad)
+        return Response(serializador.data)
 
     def get_queryset(self, *args, **kwargs):
         queryset = super().get_queryset(*args, **kwargs)
 
-        if self.action == 'list':
+        if self.action in ['list', 'retrieve']:
             queryset = queryset.defer('geometria', 'geometria_web')
         else:
-            queryset = queryset.defer('geometria')
+            queryset = queryset.defer('geometria_web')
 
         cuenta_positivos = Count(
             'entidad_residencia',

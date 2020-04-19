@@ -39,35 +39,36 @@ usando el formato \:
 
 #### Campos de texto
 
-- **contiene**\: regresa verdadero si el valor contiene el texto ingresado.
+- **contiene**\: el registro es seleccionado si el valor contiene el texto ingresado.
 
 *Para cualquier tipo de campo, si no se usan los comparadores, se asume que la
 búsqueda es exacta.*
 
 ### Especificación de parámetros y filtros
 
-El nombre de un parámetro a usar dentro del url se compone entonces de la misma
-forma en todos las situaciones\:
+El nombre de un parámetro dentro del url se compone de la misma
+forma en todas las situaciones\:
 
 1. Cuando el campo se usa para comparar el valor exacto directamente,
-únicamente se usa el nombre del campo con la igualdad. Ejemplo\:
+únicamente se emplea el nombre del campo con la igualdad. Ejemplo\:
         <host:port>/api/caso?edad=40
-2. Cuando se usan los atributos 'clave' o 'descripcion' en comparación
-exacta se indica un guión bajo el acceso al atributo. Ejemplo\:
-        <host:port>/api/caso?sexo_descripcion=F
-3. Cuando se usan los comparadores en combinación con los casos anteriores como
+2. Cuando se usan los atributos *clave* o *descripcion* en comparación
+exacta se indica con un guión bajo el acceso al atributo. Ejemplo\:
+        <host:port>/api/caso?sexo_descripcion=MUJER
+3. Usando los comparadores en combinación con los casos anteriores como
 en los siguientes ejemplos\:
         <host:port>/api/caso?fecha_ingreso_gt=2020-04-12
         <host:port>/api/caso?municipio_residencia_descripcion_contiene=Mazatlán
         <host:port>/api/caso?edad_lt=60
 
-En la documentación de cada modelo se especifican los parámetros para producir
-filtros en cada modelo.
+En la documentación de cada punto de acceso se especifican los parámetros
+para producir filtros específicos.
 
 ### Formato de respuesta
 
-Para especificar el formato de respuesta deseado (*json* o *csv*), en cualquier
-petición de listado se agrega la extensión deseada al nombre del modelo.
+Para especificar el formato de respuesta deseado (*html*, *json* o *csv*), en
+cualquier petición de listado se agrega la extensión deseada al final de la
+ruta, antes de los parámetros de filtrado.
 Por omisión, los resultados se regresan en formato *json*. Ejemplo de petición,
 en formato CSV:
 
@@ -84,6 +85,32 @@ de usarse\:
     <host:port>/api/casos?limit=100&offset=10
 
 Estos parámetros se combinan con cualquier filtro.
+
+**Los modelos *entidad*, *municipio* y *caso* son paginados por omisión**, por
+lo que el número de resultados depende del tamaño de página, el cual se
+controla con el parámetro *limit*. Para obtener la totalidad de los resultados
+en una sola petición se asigna el valor de -1 a este parámetro
+
+### Presentaciones espaciales
+
+A través de distintos puntos de acceso, la información se sirve en
+presentaciones que pueden ser útiles bajo contextos diferentes. Los puntos de
+acceso **en la raíz** de cada modelo producen la **presentación por omisión**,
+con campos simples, numéricos y de texto, y sin información geográfica
+adicional. Cada una de las siguientes rutas secundarias produce una respuesta
+alternativa, en caso de existir para el modelo dado:
+
+- **geo**: producen respuestas en formato *GeoJSON* con la geometría de las
+   coincidencias
+- **centroide**: producen respuestas en formato *GeoJSON* con el centroide de la
+   geometría asociada. Únicamente para el modelo 'caso', este campo corresponde
+   al centroide del municipio asociado
+- **coords**: produce respuestas con coordenadas geográficas en campos
+   nombrados **latitud** y **longitud**. Por el momento, este endpoint está
+   disponible únicamente para el modelo *caso*
+
+
+Por el momento, todos los **campos espaciales se presentan en EPSG:4326**.
 """
 
 schema_view = get_schema_view(

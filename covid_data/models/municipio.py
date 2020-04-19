@@ -1,6 +1,5 @@
 from django.db import models
-from django.contrib.gis.db.models import MultiPolygonField
-
+from django.contrib.gis.db.models import MultiPolygonField, PointField
 from covid_data.models.base import ModeloBase
 
 
@@ -15,6 +14,9 @@ class Municipio(ModeloBase):
 
     geometria = MultiPolygonField(srid=4326)
     geometria_web = MultiPolygonField(srid=3857)
+
+    centroide = PointField(srid=4326)
+    centroide_web = PointField(srid=3857)
 
     def __repr__(self):
         return self.descripcion

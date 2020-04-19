@@ -5,6 +5,8 @@ from covid_data.models.base import ModeloBase
 class Caso(ModeloBase):
     NO_ESPECIFICADO = 99
 
+    renglon = models.IntegerField(
+        help_text='Renglón en la tabla liberada más reciente.')
     fecha_actualizacion = models.DateField(
         help_text=(
             'La base de datos se alimenta diariamente, esta variable permite '

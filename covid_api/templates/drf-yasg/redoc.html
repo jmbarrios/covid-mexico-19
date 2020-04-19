@@ -1,0 +1,17 @@
+{% extends 'drf-yasg/redoc.html' %}
+{% load static %}
+
+{% block main_scripts %}
+    <script src="{% static 'drf-yasg/insQ.min.js' %}"></script>
+    <script src="{% static 'drf-yasg/url-polyfill.min.js' %}"></script>
+    <script src="{% static 'drf-yasg/redoc-init.js' %}"></script>
+    <script src="https://cdn.jsdelivr.net/npm/redoc@2.0.0-rc.23/bundles/redoc.standalone.js"></script>
+{% endblock %}
+
+{% block extra_styles %}
+<style media="screen">
+  .menu-content {
+    contain: unset !important;
+  }
+</style>
+{% endblock %}

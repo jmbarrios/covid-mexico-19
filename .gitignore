@@ -141,3 +141,4 @@ cython_debug/
 pgdata/
 
 covid.env
+datos/logs/*.log

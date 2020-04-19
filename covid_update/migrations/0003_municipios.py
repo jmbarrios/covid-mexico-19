@@ -36,6 +36,8 @@ def cargar_municipios(apps, schema_editor):
         geometria = GEOSGeometry(geometria.wkt, srid=6372)
         geometria_web = geometria.transform(3857, clone=True)
         geometria.transform(4326)
+        centroide = geometria.centroid
+        centroide_web = geometria_web.centroid
 
         if geometria.geom_type == 'Polygon':
             geometria = MultiPolygon(geometria, srid=4326)
@@ -48,7 +50,9 @@ def cargar_municipios(apps, schema_editor):
                 clave_municipio=clave_municipio,
                 entidad=entidad,
                 geometria=geometria,
-                geometria_web=geometria_web))
+                geometria_web=geometria_web,
+                centroide=centroide,
+                centroide_web=centroide_web))
 
         if creado:
             print(f'Municipio creado {municipio}')
