@@ -11,7 +11,7 @@ services:
     build:
       context: .
       dockerfile: docker/Dockerfile
-    command: bash docker/iniciar.sh
+    command: bash docker/iniciar.prod.sh
     ports:
       - "8002:8000"
     environment:
