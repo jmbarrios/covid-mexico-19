@@ -23,6 +23,6 @@ RUN touch /var/log/cron.log
 COPY docker/iniciar.sh /code/docker/iniciar.sh
 RUN chmod +x /code/docker/iniciar.sh
 
-COPY covid_* django_covid/ docker/ /code/
+COPY . /code/
 
 ENTRYPOINT ["/code/docker/iniciar.sh"]
