@@ -1,4 +1,5 @@
 from covid_api.views.caso import CasoViewSet
+from covid_api.views.conteo import ConteoView
 from covid_api.views.entidad import EntidadViewSet
 from covid_api.views.municipio import MunicipioViewSet
 from covid_api.views.catalogos import CatalogoEntidadesVista
@@ -15,6 +16,7 @@ from covid_api.views.catalogos import CatalogoTipoPacienteVista
 
 __all__ = [
     'CasoViewSet',
+    'ConteoView',
     'EntidadViewSet',
     'MunicipioViewSet',
     'CatalogoEntidadesVista',

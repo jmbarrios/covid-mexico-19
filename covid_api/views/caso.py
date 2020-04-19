@@ -10,6 +10,7 @@ from covid_api.serializers import caso
 
 
 campos = [
+    'renglon',
     'fecha_actualizacion',
     'fecha_ingreso',
     'fecha_sintomas',

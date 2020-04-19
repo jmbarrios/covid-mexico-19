@@ -91,7 +91,7 @@ DATABASES = {
         'ENGINE': 'django.contrib.gis.db.backends.postgis',
         'NAME': os.environ.get('POSTGRES_DBNAME', 'covid'),
         'USER': os.environ.get('POSTGRES_USER', 'covid'),
-        'PASSWORD': os.environ.get('POSTGRES_PASS', 'covid'),
+        'PASSWORD': os.environ.get('POSTGRES_PASSWORD', 'covid'),
         'HOST': os.environ.get('POSTGRES_HOST', 'localhost'),
     }
 }
