@@ -7,8 +7,6 @@ services:
       - "9132:5432"
     env_file:
       - .covid.env
-    volumes:
-      - ./pgdata/:/var/lib/postgresql/data
   covid_services:
     build:
       context: .
