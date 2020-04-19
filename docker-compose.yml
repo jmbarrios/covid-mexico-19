@@ -2,9 +2,9 @@ version: '3.1'
 
 services:
   db:
-    image: kartoza/postgis
+    image: mdillon/postgis
     ports:
-      - "${POSTGRES_PORT}:5432"
+      - "9312:5432"
   covid_services:
     build: docker/
     command: bash docker/iniciar.sh
