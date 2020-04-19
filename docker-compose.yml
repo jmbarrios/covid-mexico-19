@@ -6,8 +6,8 @@ services:
     ports:
       - "${POSTGRES_PORT}:5432"
   covid_services:
-    build: .
-    command: bash iniciar.sh
+    build: docker/
+    command: bash docker/iniciar.sh
     volumes:
       - .:/code
     ports:

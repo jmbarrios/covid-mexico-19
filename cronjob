@@ -1,2 +1,0 @@
-0 */2 * * * python /code/manage.py actualizar_casos --descargar >> /code/cron.log 2>&1
-
