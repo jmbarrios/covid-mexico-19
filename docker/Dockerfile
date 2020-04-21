@@ -4,7 +4,7 @@ ENV PYTHONUNBUFFERED 1
 ENV DEBIAN_FRONTEND=noninteractive
 
 RUN apt-get update \
-  && apt-get install -yq cron wget nano gdal-bin binutils libproj-dev libgdal-dev \
+  && apt-get install -yq cron wget nc nano gdal-bin binutils libproj-dev libgdal-dev \
   && apt-get clean \
   && rm -rf /var/lib/apt/lists/*
 
@@ -22,7 +22,6 @@ RUN touch /var/log/cron.log
 COPY docker/esperar.sh /code/esperar.sh
 COPY docker/iniciar.sh /code/iniciar.sh
 COPY docker/actualizar.sh /code/actualizar.sh
-RUN chmod +x /code/iniciar.sh
 
 COPY covid_api/ covid_data/ covid_mapa/ covid_update/ django_covid/ /code/
 
