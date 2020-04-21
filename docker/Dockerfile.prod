@@ -24,6 +24,7 @@ RUN touch /var/log/cron.log
 COPY docker/esperar.sh /code/esperar.sh
 COPY docker/iniciar.prod.sh /code/iniciar.sh
 COPY docker/actualizar.sh /code/actualizar.sh
+COPY manage.py /code/manage.py
 
 COPY covid_api/ /code/covid_api/
 COPY covid_data/ /code/covid_data/
