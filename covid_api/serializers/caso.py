@@ -122,6 +122,7 @@ class CasoCoordsSerializer(CasoSerializer):
     class Meta:
         model = models.Caso
         fields = [
+            'id_registro',
             'renglon',
             'latitud',
             'longitud',
