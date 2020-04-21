@@ -1,6 +1,4 @@
 from django.db.models import Count
-from django.views.decorators.cache import cache_page
-from django.utils.decorators import method_decorator
 from rest_framework.response import Response
 from covid_data.models import Caso
 
@@ -37,7 +35,6 @@ class ConteoView(ListViewSet):
     serializer_class = CasoConteoSerializer
     ordering_fields = ['conteo']
 
-    @method_decorator(cache_page(60 * 60 * 2))
     def list(self, request, *args, **kwargs):
         """
         Conteo de casos agrupados por columnas.

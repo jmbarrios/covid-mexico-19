@@ -1,6 +1,4 @@
 from django.db.models import Count, Q
-from django.views.decorators.cache import cache_page
-from django.utils.decorators import method_decorator
 from rest_framework.decorators import action
 from rest_framework.response import Response
 
@@ -33,7 +31,6 @@ class EntidadViewSet(ListRetrieveViewSet):
         'clave',
     ]
 
-    @method_decorator(cache_page(60*60*2))
     def list(self, *args, **kwargs):
         """
         Listado de entidades de la República Mexicana.
@@ -48,7 +45,6 @@ class EntidadViewSet(ListRetrieveViewSet):
         """
         return super().list(*args, **kwargs)
 
-    @method_decorator(cache_page(60*60*2))
     def retrieve(self, *args, **kwargs):
         """Detalle de información por entidad.
 

@@ -1,5 +1,3 @@
-from django.views.decorators.cache import cache_page
-from django.utils.decorators import method_decorator
 from rest_framework.decorators import action
 from rest_framework.response import Response
 
@@ -77,7 +75,6 @@ class CasoViewSet(ListViewSet):
 
         return queryset
 
-    @method_decorator(cache_page(60*60*2))
     def list(self, *args, **kwargs):
         """
         Listado de casos registrados.
