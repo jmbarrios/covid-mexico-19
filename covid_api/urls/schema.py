@@ -76,19 +76,31 @@ en formato CSV:
 
 ### Paginación
 
-La paginación se especifica con los parámetros habituales *limit* y *offset*
+La paginación se especifica con los parámetros habituales *limite* y *offset*
 para determinar el número máximo de registros retornados y la posición desde
 la cual comienza la página en el resultado completo, respectivamente. Por
 ejemplo, para solicitar 100 casos a partir de la posición 10 debería
 de usarse\:
 
-    <host:port>/api/casos?limit=100&offset=10
+    <host:port>/api/casos?limite=100&offset=10
 
 Estos parámetros se combinan con cualquier filtro.
 
+Los resultados paginados en formato JSON están estructurados de la siguiente
+manera:
+
+    {
+        "conteo": número de entradas totales,
+        "siguiente": url con la liga de la página siguiente,
+        "previo": url con la liga de la página anterior,
+        "results": [
+            resultado de la consulta...
+        ]
+    }
+
 **Los modelos *entidad*, *municipio* y *caso* son paginados por omisión**, por
 lo que el número de resultados depende del tamaño de página, el cual se
-controla con el parámetro *limit*. Para obtener la totalidad de los resultados
+controla con el parámetro *limite*. Para obtener la totalidad de los resultados
 en una sola petición se asigna el valor de -1 a este parámetro
 
 ### Presentaciones espaciales
