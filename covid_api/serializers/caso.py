@@ -49,6 +49,7 @@ class CasoSerializer(serializers.ModelSerializer):
         model = models.Caso
         fields = [
             'id_registro',
+            'url',
             'renglon',
             'fecha_actualizacion',
             'fecha_ingreso',
@@ -84,6 +85,9 @@ class CasoSerializer(serializers.ModelSerializer):
             'pais_nacionalidad',
             'pais_origen',
             'uci']
+        extra_kwargs = {
+            'url': {'view_name': 'caso-detail', 'lookup_field': 'id_registro'}
+        }
 
 
 class CasoGeoSerializer(serializers.ModelSerializer):

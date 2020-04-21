@@ -5,7 +5,7 @@ from rest_framework.response import Response
 
 from covid_data import models
 from covid_api import filters
-from covid_api.views.base import ListViewSet
+from covid_api.views.base import ListRetrieveViewSet
 from covid_api.serializers import caso
 
 
@@ -54,10 +54,11 @@ campos_relacionales = [
 only = campos + [f'{campo}__descripcion' for campo in campos_relacionales]
 
 
-class CasoViewSet(ListViewSet):
+class CasoViewSet(ListRetrieveViewSet):
     queryset = models.Caso.objects.all().prefetch_related(*campos_relacionales)
     filterset_class = filters.CasoFilter
     serializer_class = caso.CasoSerializer
+    lookup_field = 'id_registro'
     ordering = ['fecha_ingreso']
     ordering_fields = [
         'fecha_ingreso',
@@ -77,6 +78,17 @@ class CasoViewSet(ListViewSet):
 
         return queryset
 
+    def retrieve(self, *args, **kwargs):
+        """Detalle de información por caso.
+
+        Despliega la información desglosada de cada caso accediendo por
+        identificador de registro. Ejemplo para el caso con identificador
+        '091a48':
+
+            <host:port>/api/casos/091a48
+        """
+        return super().retrieve(*args, **kwargs)
+
     @method_decorator(cache_page(60*60*2, cache="filesystem"))
     def list(self, *args, **kwargs):
         """
@@ -89,6 +101,7 @@ class CasoViewSet(ListViewSet):
             <host:port>/api/caso?edad_lt=65&fecha_defuncion_lt=2020-04-05
         """
         return super().list(*args, **kwargs)
+
 
     @method_decorator(cache_page(60*60*2, cache="filesystem"))
     @action(detail=False, serializer_class=caso.CasoCoordsSerializer)

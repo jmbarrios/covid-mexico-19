@@ -9,7 +9,7 @@ class Caso(ModeloBase):
         help_text='Renglón en la tabla liberada más reciente.')
     id_registro = models.CharField(
         max_length=80,
-        help_text='Identificador en la liberada más reciente.')
+        help_text='Identificador en la tabla liberada más reciente.')
     fecha_actualizacion = models.DateField(
         help_text=(
             'La base de datos se alimenta diariamente, esta variable permite '
