@@ -17,6 +17,7 @@ from covid_update.actualizar.fechas import PARSERS_FECHA
 FORMATO = '%(levelname)s:: %(message)s %(columna)s %(valor)s'
 ENCODING = 'latin-1'
 
+ID_REGISTRO = 'ID_REGISTRO'
 FECHA_ACTUALIZACION = 'FECHA_ACTUALIZACION'
 ORIGEN = 'ORIGEN'
 SECTOR = 'SECTOR'
@@ -211,6 +212,7 @@ def cargar_catalogo_de_modelo(modelo, defer=None):
 
 def obtener_datos(renglon, catalogos, municipios):
     return {
+        'id_registro': str(renglon[ID_REGISTRO]),
         'edad': int(renglon[EDAD]),
         'nacionalidad': buscar_catalogo(renglon, NACIONALIDAD, catalogos),
         'origen': buscar_catalogo(renglon, ORIGEN, catalogos),

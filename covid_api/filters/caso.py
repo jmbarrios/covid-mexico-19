@@ -9,6 +9,8 @@ VALORES_BOOLEANOS = (
 
 
 class CasoFilter(django_filters.FilterSet):
+    id_registro = django_filters.CharFilter(
+        help_text='Identifica el id del registro. Búsqueda exacta.')
     fecha_actualizacion = django_filters.DateFilter(
         help_text=(
             'Fecha de última actualización de la base '
