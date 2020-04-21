@@ -24,6 +24,6 @@ COPY docker/iniciar.sh /code/iniciar.sh
 COPY docker/actualizar.sh /code/actualizar.sh
 RUN chmod +x /code/iniciar.sh
 
-COPY covid_api/ covid_data/ covid_mapa/ covid_update/ django_covid/ /code
+COPY covid_api/ covid_data/ covid_mapa/ covid_update/ django_covid/ /code/
 
 ENTRYPOINT ["/code/esperar.sh"]
