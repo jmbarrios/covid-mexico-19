@@ -13,7 +13,7 @@ services:
     build:
       context: .
       dockerfile: docker/Dockerfile.prod
-    command: gunicorn django_covid.wsgi:application --bind 0.0.0.0:8000 -w 4
+    command: gunicorn django_covid.wsgi:application --bind 0.0.0.0:8000 -w 4 --timeout 600
     expose:
       - 8000
     environment:
