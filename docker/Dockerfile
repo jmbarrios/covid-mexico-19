@@ -4,7 +4,11 @@ ENV PYTHONUNBUFFERED 1
 ENV DEBIAN_FRONTEND=noninteractive
 
 RUN apt-get update \
+<<<<<<< HEAD
   && apt-get install -yq cron wget nc nano gdal-bin binutils libproj-dev libgdal-dev \
+=======
+  && apt-get install -yq cron wget nano gdal-bin binutils libproj-dev libgdal-dev memcached libmemcached-tools \
+>>>>>>> master
   && apt-get clean \
   && rm -rf /var/lib/apt/lists/*
 

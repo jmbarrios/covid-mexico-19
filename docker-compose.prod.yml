@@ -12,8 +12,13 @@ services:
   covid_services:
     build:
       context: .
+<<<<<<< HEAD
       dockerfile: docker/Dockerfile.prod
     command: gunicorn hello_django.wsgi:application --bind 0.0.0.0:8000 -w 4
+=======
+      dockerfile: docker/Dockerfile
+    command: gunicorn django_covid.wsgi:application --bind 0.0.0.0:8000 -w 4
+>>>>>>> master
     expose:
       - 8000
     environment:

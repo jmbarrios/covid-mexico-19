@@ -2,6 +2,7 @@ import os
 import datetime
 
 from django.conf import settings
+from django.core.cache import cache
 from django.core.management.base import BaseCommand
 from covid_update.descarga import descargar_datos
 from covid_update.actualizar.casos import actualizar_casos
@@ -29,7 +30,7 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         if options['descargar']:
-            mensaje = 'Descargado datos'
+            mensaje = 'Descargando datos...'
             self.stdout.write(self.style.NOTICE(mensaje))
             descargar_datos()
 
@@ -55,6 +56,8 @@ class Command(BaseCommand):
         codigo = actualizar_casos(log=log, forzar=forzar)
 
         if codigo == 0:
+            cache.clear()
+
             mensaje = 'Datos actualizados correctamente'
             self.stdout.write(self.style.SUCCESS(mensaje))
         elif codigo == 1:

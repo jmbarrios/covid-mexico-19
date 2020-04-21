@@ -9,6 +9,8 @@ VALORES_BOOLEANOS = (
 
 
 class CasoFilter(django_filters.FilterSet):
+    id_registro = django_filters.CharFilter(
+        help_text='Identifica el id del registro. Búsqueda exacta.')
     fecha_actualizacion = django_filters.DateFilter(
         help_text=(
             'Fecha de última actualización de la base '
@@ -799,5 +801,4 @@ class CasoConteoFilter(CasoFilter):
 
     def agregar_por_columnas(self, queryset, name, value):
         columnas = [COLUMNAS[col] for col in value]
-        print(columnas)
         return queryset.values(*columnas)

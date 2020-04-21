@@ -22,7 +22,7 @@ class Command(BaseCommand):
 
     def handle(self, *args, **opciones):
         if opciones['descargar']:
-            mensaje = 'Descargando catalogos'
+            mensaje = 'Descargando catalogos...'
             self.stdout.write(self.style.NOTICE(mensaje))
             descargar_catalogos(forzar=opciones['forzar'])
 

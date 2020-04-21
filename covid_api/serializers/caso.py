@@ -48,6 +48,8 @@ class CasoSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Caso
         fields = [
+            'id_registro',
+            'url',
             'renglon',
             'fecha_actualizacion',
             'fecha_ingreso',
@@ -83,6 +85,9 @@ class CasoSerializer(serializers.ModelSerializer):
             'pais_nacionalidad',
             'pais_origen',
             'uci']
+        extra_kwargs = {
+            'url': {'view_name': 'caso-detail', 'lookup_field': 'id_registro'}
+        }
 
 
 class CasoGeoSerializer(serializers.ModelSerializer):
@@ -107,9 +112,11 @@ class CasoGeoSerializer(serializers.ModelSerializer):
 class CasoCoordsSerializer(CasoSerializer):
     latitud = serializers.FloatField(
         source='municipio_residencia.centroide.y',
+        allow_null=True,
         help_text='Latitud del centroide del municipio de residencia.')
     longitud = serializers.FloatField(
         source='municipio_residencia.centroide.x',
+        allow_null=True,
         help_text='Longitud del centroide del municipio de residencia.')
 
     class Meta:

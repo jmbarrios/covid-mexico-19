@@ -4,6 +4,9 @@ import pandas as pd
 from rest_framework import renderers
 
 
+MAX_ROWS_BEFORE_COMPRESSION = 500
+
+
 class CSVRenderer(renderers.BaseRenderer):
     media_type = 'text/csv'
     format = 'csv'
@@ -20,13 +23,14 @@ class CSVRenderer(renderers.BaseRenderer):
         if data is None:
             return ''
 
-        if isinstance(data, dict) and 'results' in data:
-            data = data['results']
+        if isinstance(data, dict) and 'resultados' in data:
+            data = data['resultados']
 
         if not isinstance(data, list):
             data = [data]
 
         df = pd.DataFrame(data)
+
         csv_buffer = StringIO()
         df.to_csv(
             csv_buffer,

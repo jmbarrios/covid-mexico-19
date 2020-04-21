@@ -90,7 +90,7 @@ Los resultados paginados en formato JSON están estructurados de la siguiente
 manera:
 
     {
-        "conteo": número de entradas totales,
+        "total": número de entradas totales,
         "siguiente": url con la liga de la página siguiente,
         "previo": url con la liga de la página anterior,
         "results": [
