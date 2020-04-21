@@ -19,7 +19,7 @@ services:
     environment:
       - POSTGRES_HOST=db
     volumes:
-      - covid_static:/code/staticfiles
+      - covid_static:/staticfiles
     env_file:
       - .covid.prod.env
     depends_on:
@@ -31,7 +31,7 @@ services:
     depends_on:
       - covid_services
     volumes:
-      - covid_static:/www/staticfiles
+      - covid_static:/var/www/staticfiles
 
 volumes:
   covid_data:
