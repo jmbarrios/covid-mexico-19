@@ -23,6 +23,10 @@ COPY docker/esperar.sh /code/esperar.sh
 COPY docker/iniciar.sh /code/iniciar.sh
 COPY docker/actualizar.sh /code/actualizar.sh
 
-COPY covid_api covid_data covid_mapa covid_update django_covid /code/
+COPY covid_api/ /code/covid_api/
+COPY covid_data/ /code/covid_data/
+COPY covid_mapa/ /code/covid_mapa/
+COPY covid_update/ /code/covid_update/
+COPY django_covid/ /code/django_covid/
 
 ENTRYPOINT ["/code/esperar.sh"]
