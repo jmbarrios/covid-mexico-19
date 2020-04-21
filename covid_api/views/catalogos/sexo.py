@@ -3,7 +3,7 @@ from django.utils.decorators import method_decorator
 
 from covid_data import models
 from covid_api.serializers import otros
-from covid_api.views.catalogos.base import CatalogoVista
+from covid_api.views.base import CatalogoVista
 
 
 class CatalogoSexoVista(CatalogoVista):

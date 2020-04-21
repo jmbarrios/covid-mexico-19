@@ -1,3 +1,5 @@
+from django.utils.decorators import method_decorator
+from django.views.decorators.cache import cache_page
 from rest_framework.decorators import action
 from rest_framework.response import Response
 
@@ -75,6 +77,7 @@ class CasoViewSet(ListViewSet):
 
         return queryset
 
+    @method_decorator(cache_page(60*60*2, cache="filesystem"))
     def list(self, *args, **kwargs):
         """
         Listado de casos registrados.
@@ -87,6 +90,7 @@ class CasoViewSet(ListViewSet):
         """
         return super().list(*args, **kwargs)
 
+    @method_decorator(cache_page(60*60*2, cache="filesystem"))
     @action(detail=False, serializer_class=caso.CasoCoordsSerializer)
     def coords(self, request, **kwargs):
         """
@@ -110,6 +114,7 @@ class CasoViewSet(ListViewSet):
         serializer = self.get_serializer(queryset, many=True)
         return Response(serializer.data)
 
+    @method_decorator(cache_page(60*60*2, cache="filesystem"))
     @action(detail=False, serializer_class=caso.CasoGeoSerializer)
     def centroide(self, request, **kwargs):
         """

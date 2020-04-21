@@ -24,26 +24,51 @@ class CustomPaginator(pagination.LimitOffsetPagination):
 
     def get_paginated_response(self, data):
         return Response(OrderedDict([
-            ('conteo', self.count),
+            ('total', self.count),
             ('siguiente', self.get_next_link()),
             ('previo', self.get_previous_link()),
             ('resultados', data)
         ]))
 
     def paginate_queryset(self, queryset, request, view=None):
+        self.request = request
+
         self.count = self.get_count(queryset)
         self.limit = self.get_limit(request)
+
         if self.limit == -1:
-            return None
+            self.limit = self.count
 
         self.offset = self.get_offset(request)
-        self.request = request
         if self.count > self.limit and self.template is not None:
             self.display_page_controls = True
 
         if self.count == 0 or self.offset > self.count:
             return []
         return list(queryset[self.offset:self.offset + self.limit])
+
+    def get_paginated_response_schema(self, schema):
+        return {
+            'type': 'object',
+            'properties': {
+                'total': {
+                    'type': 'integer',
+                    'example': 123,
+                    'description': 'Número total registros'
+                },
+                'siguiente': {
+                    'type': 'string',
+                    'nullable': True,
+                    'description': 'Link a página siguiente'
+                },
+                'previo': {
+                    'type': 'string',
+                    'nullable': True,
+                    'description': 'Link a página previa'
+                },
+                'resultados': schema,
+            },
+        }
 
     def get_limit(self, request):
         if self.limit_query_param:

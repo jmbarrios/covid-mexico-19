@@ -799,5 +799,4 @@ class CasoConteoFilter(CasoFilter):
 
     def agregar_por_columnas(self, queryset, name, value):
         columnas = [COLUMNAS[col] for col in value]
-        print(columnas)
         return queryset.values(*columnas)

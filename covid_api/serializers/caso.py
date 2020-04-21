@@ -107,9 +107,11 @@ class CasoGeoSerializer(serializers.ModelSerializer):
 class CasoCoordsSerializer(CasoSerializer):
     latitud = serializers.FloatField(
         source='municipio_residencia.centroide.y',
+        allow_null=True,
         help_text='Latitud del centroide del municipio de residencia.')
     longitud = serializers.FloatField(
         source='municipio_residencia.centroide.x',
+        allow_null=True,
         help_text='Longitud del centroide del municipio de residencia.')
 
     class Meta:
