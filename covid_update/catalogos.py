@@ -46,7 +46,8 @@ def obtener_rutas():
     directorio = os.path.join(
         settings.BASE_DIR,
         settings.DATOS_BASE_DIR,
-        settings.DESCARGAS_DIR)
+        settings.DESCARGAS_DIR,
+        'diccionario_datos_covid19')
 
     archivos = glob.glob(os.path.join(directorio, '*'))
     catalogos = [ruta for ruta in archivos if 'Catalogos' in ruta][0]
