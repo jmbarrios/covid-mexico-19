@@ -10,6 +10,7 @@ services:
     env_file:
       - .covid.prod.env
   covid_services:
+    image: covid_services:prod
     build:
       context: .
       dockerfile: docker/Dockerfile.prod
