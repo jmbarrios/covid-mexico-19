@@ -19,14 +19,18 @@ campos = [
 ]
 
 
-campos_relacionales = [
-    'origen',
-    'sector',
-    'entidad_um',
-    'sexo',
+campos_clave = [
     'entidad_nacimiento',
     'entidad_residencia',
     'municipio_residencia',
+    'entidad_um',
+]
+
+
+campos_relacionales = [
+    'origen',
+    'sector',
+    'sexo',
     'tipo_paciente',
     'intubado',
     'neumonia',
@@ -51,7 +55,10 @@ campos_relacionales = [
     'uci',
 ]
 
-only = campos + [f'{campo}__descripcion' for campo in campos_relacionales]
+only = (
+    campos +
+    [f'{campo}__descripcion' for campo in campos_relacionales + campos_clave]
+)
 
 
 class CasoViewSet(ListRetrieveViewSet):

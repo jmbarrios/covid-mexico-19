@@ -1,12 +1,19 @@
 from django.db.models import Count
 from rest_framework.response import Response
 from covid_data.models import Caso
-
 from covid_api import filters
-from covid_api.serializers.caso import CasoConteoSerializer
+from covid_api.serializers.conteo import CasoConteoSerializer
 from covid_api.views.base import ListViewSet
 from covid_api.views.caso import campos_relacionales
-from covid_api.views.caso import only
+from covid_api.views.caso import campos
+from covid_api.views.caso import campos_clave
+
+
+only = (
+    campos +
+    [f'{campo}__clave' for campo in campos_clave] +
+    [f'{campo}__descripcion' for campo in campos_relacionales + campos_clave]
+)
 
 
 class ConteoView(ListViewSet):
@@ -30,10 +37,9 @@ class ConteoView(ListViewSet):
         Caso.objects
         .all()
         .prefetch_related(*campos_relacionales)
-        .only(*only, 'resultado__clave'))
+        .only(*only))
     filterset_class = filters.CasoConteoFilter
     serializer_class = CasoConteoSerializer
-    ordering_fields = ['conteo']
 
     def list(self, request, *args, **kwargs):
         """
@@ -89,6 +95,21 @@ class ConteoView(ListViewSet):
             return Response(serializer.data)
 
         queryset = queryset.annotate(conteo=Count('renglon'))
+
+        if 'ordenar' in self.request.GET:
+            ordenar = self.request.GET['ordenar']
+
+            opciones = []
+            for col in columnas + ['conteo']:
+                opciones += [col, f'-{col}']
+
+            if ordenar in opciones:
+                queryset = queryset.order_by(ordenar)
+            else:
+                queryset = queryset.order_by('-conteo')
+        else:
+            queryset = queryset.order_by('-conteo')
+
         page = self.paginate_queryset(queryset)
 
         if page is not None:

@@ -8,14 +8,7 @@ router.register('entidades', views.EntidadViewSet)
 router.register('municipios', views.MunicipioViewSet)
 router.register('casos', views.CasoViewSet)
 router.register('conteos', views.ConteoView)
-router.register(
-    'catalogos/entidades',
-    views.CatalogoEntidadesVista,
-    basename='catalogo-entidad')
-router.register(
-    'catalogos/municipios',
-    views.CatalogoMunicipiosVista,
-    basename='catalogo-municipio')
+
 router.register(
     'catalogos/nacionalidad',
     views.CatalogoNacionalidadVista,
@@ -48,3 +41,12 @@ router.register(
     'catalogos/tipo_paciente',
     views.CatalogoTipoPacienteVista,
     basename='catalogo-tipopaciente')
+
+router.register(
+    'poblacion/municipios',
+    views.MunicipioPoblacionViewSet,
+    basename='municipiopoblacion')
+router.register(
+    'poblacion/entidades',
+    views.EntidadPoblacionViewSet,
+    basename='entidadpoblacion')

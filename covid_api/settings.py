@@ -22,3 +22,5 @@ COVID_API_APPS = [
     'django_filters',
     'crispy_forms',
 ]
+
+ORDERING_PARAM = 'ordenar'

@@ -28,6 +28,7 @@ INSTALLED_APPS = (
         'covid_data.apps.CovidDataConfig',
         'covid_update.apps.CovidUpdateConfig',
         'covid_mapa.apps.CovidMapaConfig',
+        'covid_datos_adicionales.apps.CovidDatosAdicionalesConfig',
         'corsheaders',
         'django.contrib.gis',
         'django.contrib.admin',
@@ -86,17 +87,6 @@ DATABASES = {
     }
 }
 
-CACHES = {
-    'default': {
-        'BACKEND': 'django.core.cache.backends.memcached.MemcachedCache',
-        'LOCATION': '127.0.0.1:11211',
-    },
-    'filesystem': {
-        'BACKEND': 'django.core.cache.backends.filebased.FileBasedCache',
-        'LOCATION': '/var/tmp/django_cache',
-    }
-}
-
 CACHE_MIDDLEWARE_SECONDS = 60 * 60 * 2
 
 CACHES = {
@@ -104,8 +94,7 @@ CACHES = {
         'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
     },
     'filesystem': {
-        'BACKEND': 'django.core.cache.backends.filebased.FileBasedCache',
-        'LOCATION': '/var/tmp/django_cache',
+        'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
     }
 }
 

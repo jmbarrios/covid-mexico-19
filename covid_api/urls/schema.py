@@ -5,7 +5,7 @@ from drf_yasg import openapi
 description = """
 ## API REST para la consulta de casos COVID-19 en México.
 
-Estos servicios presetan la información liberada diariamente por la Dirección
+Estos servicios presentan la información liberada diariamente por la Dirección
 General de Epidemiología de la Secretaría de Salud de la República Mexicana
 referente a la actual epidemia de COVID-19. Los datos originales son
 descargados desde la dirección:
@@ -130,8 +130,9 @@ schema_view = get_schema_view(
       title="COVID-19 Mexico",
       default_version='v1',
       description=description,
-      terms_of_service="https://www.google.com/policies/terms/",
-      contact=openapi.Contact(name="CONABIO"),
+      contact=openapi.Contact(
+          name="CONABIO",
+          url="https://github.com/CONABIO-audio/covid-mexico-19"),
       license=openapi.License(name="BSD License"),
    ),
    public=True,
