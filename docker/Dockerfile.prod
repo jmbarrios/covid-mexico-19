@@ -33,4 +33,6 @@ COPY covid_update/ /code/covid_update/
 COPY covid_datos_adicionales/ /code/covid_datos_adicionales/
 COPY django_covid/ /code/django_covid/
 
+RUN mkdir /code/datos
+
 ENTRYPOINT ["/code/esperar.sh"]
