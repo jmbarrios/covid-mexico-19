@@ -30,6 +30,7 @@ COPY covid_api/ /code/covid_api/
 COPY covid_data/ /code/covid_data/
 COPY covid_mapa/ /code/covid_mapa/
 COPY covid_update/ /code/covid_update/
+COPY covid_datos_adicionales/ /code/covid_datos_adicionales/
 COPY django_covid/ /code/django_covid/
 
 ENTRYPOINT ["/code/esperar.sh"]
