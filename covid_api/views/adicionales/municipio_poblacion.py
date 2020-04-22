@@ -18,6 +18,26 @@ defer = [
 
 
 class MunicipioPoblacionViewSet(ListRetrieveViewSet):
+    """
+    Población por municipio.
+
+    En este endpoint podrás acceder a la información de la población agregada
+    a nivel municipio.
+
+    La lista de municipios contiene sólo información de poblacion total,
+    población masculina total y población femenina total. Pero si se desea un
+    listado que incluya todos los datos poblacionales se puede usar el endpoint
+
+        /api/poblacion/municipios/completo
+
+    O bien, si se desean los datos poblacionales de un municipio en particular
+    se puede consultar el endpoint
+
+        /api/poblacion/municipios/<clave_municipio>
+
+    Los datos fueron tomados de las proyecciones oficiales de población por
+    municipio de la CONAPO e INEGI para el 2020.
+    """
     queryset = (
         MunicipioPoblacion.objects
         .prefetch_related('municipio', 'municipio__entidad')
@@ -41,8 +61,44 @@ class MunicipioPoblacionViewSet(ListRetrieveViewSet):
             return MunicipioPoblacionListSerializer
         return MunicipioPoblacionSerializer
 
+    def retrieve(self, *args, **kwargs):
+        """
+        Detalle de datos de población por municipio
+
+        Los datos fueron tomados de las proyecciones oficiales de población por
+        municipio de la CONAPO e INEGI para el 2020.
+        """
+        return super().retrieve(*args, **kwargs)
+
+    def list(self, *args, **kwargs):
+        """
+        Listado de municipios con población total, masculina y femenina
+
+        El conjunto de datos puede ser filtrado de acuerdo a los parámetros
+        que se describen en el listado de abajo para producir subconjuntos de
+        interés en la respuesta. Ejemplo:
+
+            <host:port>/api/poblacion/municipios?pt_gt=10000&ppft_gt=50
+
+        Los datos fueron tomados de las proyecciones oficiales de población por
+        municipio de la CONAPO e INEGI para el 2020.
+        """
+        return super().list(*args, **kwargs)
+
     @action(detail=False)
     def todo(self, request, **kwargs):
+        """
+        Listado de municipios con datos completos de población
+
+        El conjunto de datos puede ser filtrado de acuerdo a los parámetros
+        que se describen en el listado de abajo para producir subconjuntos de
+        interés en la respuesta. Ejemplo:
+
+            <host:port>/api/poblacion/municipios/completo?pt_gt=10000&ppft_gt=50
+
+        Los datos fueron tomados de las proyecciones oficiales de población por
+        municipio de la CONAPO e INEGI para el 2020.
+        """
         queryset = self.get_queryset()
         queryset = self.filter_queryset(queryset)
 
