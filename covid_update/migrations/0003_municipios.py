@@ -13,7 +13,7 @@ RUTA_MUNICIPIOS_SHP = os.path.join(
     'data',
     'marco_geoestadistico',
     'mun',
-    '01_32_mun.shp')
+    '00mun.shp')
 
 
 @transaction.atomic

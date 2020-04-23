@@ -13,7 +13,7 @@ RUTA_ENTIDADES_SHP = os.path.join(
     'data',
     'marco_geoestadistico',
     'ent',
-    '01_32_ent.shp')
+    '00ent.shp')
 
 
 @transaction.atomic
