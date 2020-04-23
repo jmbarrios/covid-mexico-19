@@ -5,7 +5,12 @@ REST_FRAMEWORK = {
         'rest_framework.filters.OrderingFilter'
     ),
     'DEFAULT_PERMISSION_CLASSES': [
-        'rest_framework.permissions.IsAuthenticatedOrReadOnly'
+        'rest_framework.permissions.IsAuthenticated',
+    ],
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework.authentication.BasicAuthentication',
+        'rest_framework.authentication.SessionAuthentication',
+        'rest_framework.authentication.TokenAuthentication',
     ],
     'DEFAULT_RENDERER_CLASSES': [
         'rest_framework.renderers.JSONRenderer',
@@ -19,6 +24,7 @@ COVID_API_APPS = [
     'covid_api.apps.CovidApiConfig',
     'drf_yasg',
     'rest_framework',
+    'rest_framework.authtoken',
     'django_filters',
     'crispy_forms',
 ]
