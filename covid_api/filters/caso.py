@@ -683,69 +683,69 @@ class CasoFilter(django_filters.FilterSet):
         return queryset.filter(resultado__clave=3)
 
     def caso_intubado(self, queryset, name, value):
-        clave = 1 if value else 2
+        clave = 1 if value == 'si' else 2
         return queryset.filter(intubado__clave=clave)
 
     def caso_neumonia(self, queryset, name, value):
-        clave = 1 if value else 2
+        clave = 1 if value == 'si' else 2
         return queryset.filter(neumonia__clave=clave)
 
     def caso_embarazo(self, queryset, name, value):
-        clave = 1 if value else 2
+        clave = 1 if value == 'si' else 2
         return queryset.filter(embarazo__clave=clave)
 
     def caso_habla_lengua_indigena(self, queryset, name, value):
-        clave = 1 if value else 2
+        clave = 1 if value == 'si' else 2
         return queryset.filter(habla_lengua_indigena__clave=clave)
 
     def caso_diabetes(self, queryset, name, value):
-        clave = 1 if value else 2
+        clave = 1 if value == 'si' else 2
         return queryset.filter(diabetes__clave=clave)
 
     def caso_epoc(self, queryset, name, value):
-        clave = 1 if value else 2
+        clave = 1 if value == 'si' else 2
         return queryset.filter(epoc__clave=clave)
 
     def caso_asma(self, queryset, name, value):
-        clave = 1 if value else 2
+        clave = 1 if value == 'si' else 2
         return queryset.filter(asma__clave=clave)
 
     def caso_inmusupr(self, queryset, name, value):
-        clave = 1 if value else 2
+        clave = 1 if value == 'si' else 2
         return queryset.filter(inmusupr__clave=clave)
 
     def caso_hipertension(self, queryset, name, value):
-        clave = 1 if value else 2
+        clave = 1 if value == 'si' else 2
         return queryset.filter(hipertension__clave=clave)
 
     def caso_otras_com(self, queryset, name, value):
-        clave = 1 if value else 2
+        clave = 1 if value == 'si' else 2
         return queryset.filter(otras_com__clave=clave)
 
     def caso_cardiovascular(self, queryset, name, value):
-        clave = 1 if value else 2
+        clave = 1 if value == 'si' else 2
         return queryset.filter(cardiovascular__clave=clave)
 
     def caso_obesidad(self, queryset, name, value):
-        clave = 1 if value else 2
+        clave = 1 if value == 'si' else 2
         return queryset.filter(obesidad__clave=clave)
 
     def caso_renal_cronica(self, queryset, name, value):
-        clave = 1 if value else 2
+        clave = 1 if value == 'si' else 2
         return queryset.filter(renal_cronica__clave=clave)
 
     def caso_tabaquismo(self, queryset, name, value):
-        clave = 1 if value else 2
+        clave = 1 if value == 'si' else 2
         return queryset.filter(tabaquismo__clave=clave)
 
     def caso_otro_caso(self, queryset, name, value):
-        clave = 1 if value else 2
+        clave = 1 if value == 'si' else 2
         return queryset.filter(otro_caso__clave=clave)
 
     def caso_migrate(self, queryset, name, value):
-        clave = 1 if value else 2
+        clave = 1 if value == 'si' else 2
         return queryset.filter(migrate__clave=clave)
 
     def caso_uci(self, queryset, name, value):
-        clave = 1 if value else 2
+        clave = 1 if value == 'si' else 2
         return queryset.filter(uci__clave=clave)
