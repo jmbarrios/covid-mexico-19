@@ -23,4 +23,5 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     url('mapa/', include('covid_mapa.urls')),
     url('', include('covid_api.urls')),
+    url('', include('covid_graphql.urls'))
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

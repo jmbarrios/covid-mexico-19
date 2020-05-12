@@ -37,6 +37,10 @@ INSTALLED_APPS = (
         'django.contrib.sessions',
         'django.contrib.messages',
         'django.contrib.staticfiles',
+    ] +
+    [ 
+        'covid_graphql.apps.CovidGraphqlConfig',
+        'graphene_django',
     ]
 )
 
@@ -84,6 +88,7 @@ DATABASES = {
         'USER': os.environ.get('POSTGRES_USER', 'covid'),
         'PASSWORD': os.environ.get('POSTGRES_PASSWORD', 'covid'),
         'HOST': os.environ.get('POSTGRES_HOST', 'localhost'),
+        'PORT': os.environ.get('POSTGRES_PORT', 5432)
     }
 }
 
